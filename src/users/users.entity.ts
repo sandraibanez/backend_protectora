@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany } from 'typeorm';
-import { Animal } from './animal.entity';
+import { Animales } from 'src/animales/animales.entity';
 @Entity()
-export class User {
+export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,12 +20,12 @@ export class User {
   @Column()
   DNI: Number;
 
-  @OneToMany(type => Animal, (dar) => dar.id)
-  dar: Animal[];
-  @OneToMany(type => Animal, (acoger) => acoger.id)
-  acoger: Animal[];
-  @OneToMany(type => Animal, (adoptar) => adoptar.id)
-  adoptar: Animal[];
-  @ManyToMany(type => Animal, (apadrinar) => apadrinar.id)
-  apadrinar: Animal[];
+  @OneToMany(type => Animales, (dar) => dar.id)
+  dar: Animales[];
+  @OneToMany(type => Animales, (acoger) => acoger.id)
+  acoger: Animales[];
+  @OneToMany(type => Animales, (adoptar) => adoptar.id)
+  adoptar: Animales[];
+  @ManyToMany(type => Animales, (apadrinar) => apadrinar.id)
+  apadrinar: Animales[];
 }
