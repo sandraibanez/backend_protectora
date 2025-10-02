@@ -23,8 +23,6 @@ import { ClinicaVeterinariaController } from './clinica_veterinaria/clinica_vete
 import { ClinicaVeterinariaService } from './clinica_veterinaria/clinica_veterinaria.service';
 import { ClinicaVeterinariaModule } from './clinica_veterinaria/clinica_veterinaria.module';
 import { Clinica_veterinaria } from './clinica_veterinaria/clinica_veterinaria.entity';
-import { Users } from './users/users.entity';
-import { Animales } from './animales/animales.entity';
 import { IngresosService } from './ingresos/ingresos.service';
 import { IngresosModule } from './ingresos/ingresos.module';
 import { IngresosController } from './ingresos/ingresos.controller';
@@ -40,10 +38,7 @@ import { ProtectorasController } from './protectoras/protectoras.controller';
 import { Colonias } from './colonias/colonias.entity';
 import { ColoniasService } from './colonias/colonias.service';
 import { ColoniasModule } from './colonias/colonias.module';
-import { ColoniasController } from './colonias/colonias.controller';
-import { AnimalesService } from './animales/animales.service';
-import { AnimalesModule } from './animales/animales.module';
-import { AnimalesController } from './animales/animales.controller';  
+import { ColoniasController } from './colonias/colonias.controller'; 
 import { DonacionesViveres } from './donaciones_viveres/donaciones_viveres.entity';
 import { DonacionesViveresService } from './donaciones_viveres/donaciones_viveres.service';
 import { DonacionesViveresModule } from './donaciones_viveres/donaciones_viveres.module';
@@ -60,8 +55,7 @@ import { DonacionesViveresController } from './donaciones_viveres/donaciones_viv
       username: 'root',
       password: 'root',
       database: 'prueva',
-      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria],
-      entities: [Users, Animales, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres],
+      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres],
       synchronize: true,
     }),
       UsersModule,
@@ -76,10 +70,9 @@ import { DonacionesViveresController } from './donaciones_viveres/donaciones_viv
       AnimalesModule,
       DonacionesViveresModule
   ],
-  controllers: [AppController, UsersController,AnimalesController, EntidadController, MedicacionController, ClinicaVeterinariaController],
-  providers: [AppService, UsersService, AnimalesService, EntidadService, MedicacionService, ClinicaVeterinariaService],
-  controllers: [AppController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController],
-  providers: [AppService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService],
+
+  controllers: [AppController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController],
+  providers: [AppService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService],
   
 
 })
