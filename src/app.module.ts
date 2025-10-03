@@ -43,7 +43,10 @@ import { DonacionesViveres } from './donaciones_viveres/donaciones_viveres.entit
 import { DonacionesViveresService } from './donaciones_viveres/donaciones_viveres.service';
 import { DonacionesViveresModule } from './donaciones_viveres/donaciones_viveres.module';
 import { DonacionesViveresController } from './donaciones_viveres/donaciones_viveres.controller';
-
+import { RelacionPersonaAnimalController } from './relacion_persona_animal/relacion_persona_animal.controller';
+import { RelacionPersonaAnimalService } from './relacion_persona_animal/relacion_persona_animal.service';
+import { RelacionPersonaAnimalModule } from './relacion_persona_animal/relacion_persona_animal.module';
+import { Relacion_Persona_Animal } from './relacion_persona_animal/relacion_persona_animal.entity';
 
 @Module({
   imports: [
@@ -55,7 +58,7 @@ import { DonacionesViveresController } from './donaciones_viveres/donaciones_viv
       username: 'root',
       password: 'root',
       database: 'prueva',
-      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres],
+      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres, Relacion_Persona_Animal],
       synchronize: true,
     }),
       UsersModule,
@@ -68,11 +71,12 @@ import { DonacionesViveresController } from './donaciones_viveres/donaciones_viv
       ProtectorasModule,
       ColoniasModule,
       AnimalesModule,
-      DonacionesViveresModule
+      DonacionesViveresModule,
+      RelacionPersonaAnimalModule
   ],
 
-  controllers: [AppController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController],
-  providers: [AppService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService],
+  controllers: [AppController,UsersController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, RelacionPersonaAnimalController],
+  providers: [AppService,UsersService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, RelacionPersonaAnimalService],
   
 
 })

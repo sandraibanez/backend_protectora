@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn,ManyToMany , JoinTable } from 'typeorm';
 import { Animales } from 'src/animales/animales.entity';
 
-@Entity()
+@Entity('entidad')
 
 export class Entidad {
   @PrimaryGeneratedColumn()

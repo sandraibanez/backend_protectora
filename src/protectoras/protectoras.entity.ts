@@ -3,7 +3,7 @@ import { DonacionesViveres } from 'src/donaciones_viveres/donaciones_viveres.ent
 import { Gastos } from 'src/gastos/gastos.entity';
 import { Ingresos } from 'src/ingresos/ingresos.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-
+import { Animales } from 'src/animales/animales.entity';
 @Entity('protectoras') 
 export class Protectoras {
     @PrimaryGeneratedColumn()
@@ -29,5 +29,8 @@ export class Protectoras {
 
     @OneToMany(() => Ingresos, ingreso => ingreso.protectora)
     ingresos: Ingresos[];
+
+    @OneToMany(() => Animales, Animal => Animal.id)
+    animal: Animales[];
 
 }

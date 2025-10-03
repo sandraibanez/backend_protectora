@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, OneToMany } from 'typeorm';
-import { User } from 'src/users/users.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Medicacion } from 'src/medicacion/medicacion.entity';
-@Entity('animales') 
+import { Relacion_Persona_Animal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
+import { Protectoras } from 'src/protectoras/protectoras.entity';
+@Entity('animales')
 export class Animales {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,19 +23,20 @@ export class Animales {
   f_nacimiento: Date;
 
   @Column({ length: 50 })
-  estado: string; 
+  estado: string;
 
   @Column({ length: 50 })
-  chip: string; 
+  chip: string;
 
   @Column({ default: false })
   esterilizado: boolean;
 
+  @OneToMany(() => Medicacion, (medicacion) => medicacion.id)
+  medicacion: Medicacion
 
-  @ManyToMany(() => User)
-  @JoinTable()
-  personas: User[]
+  @OneToMany(() => Relacion_Persona_Animal, rel => rel.animal)
+  relaciones: Relacion_Persona_Animal[];
 
-  @OneToMany(()=>Medicacion, (medicacion)=> medicacion.id)
-    medicacion: Medicacion
+  @ManyToOne(() => Protectoras, (pertenece) => pertenece.id)
+  pertenece: Protectoras[];
 }
