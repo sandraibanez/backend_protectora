@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { Animales } from 'src/animales/animales.entity';
-@Entity()
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Relacion_Persona_Animal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
+@Entity('user')
 
 export class User {
   @PrimaryGeneratedColumn()
@@ -21,5 +21,7 @@ export class User {
   @Column()
   DNI: Number;
 
-  
+  @OneToMany(() => Relacion_Persona_Animal, rel => rel.persona)
+  relaciones: Relacion_Persona_Animal[];
+
 }

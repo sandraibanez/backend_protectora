@@ -43,6 +43,10 @@ import { DonacionesViveres } from './donaciones_viveres/donaciones_viveres.entit
 import { DonacionesViveresService } from './donaciones_viveres/donaciones_viveres.service';
 import { DonacionesViveresModule } from './donaciones_viveres/donaciones_viveres.module';
 import { DonacionesViveresController } from './donaciones_viveres/donaciones_viveres.controller';
+import { RelacionPersonaAnimalController } from './relacion_persona_animal/relacion_persona_animal.controller';
+import { RelacionPersonaAnimalService } from './relacion_persona_animal/relacion_persona_animal.service';
+import { RelacionPersonaAnimalModule } from './relacion_persona_animal/relacion_persona_animal.module';
+import { Relacion_Persona_Animal } from './relacion_persona_animal/relacion_persona_animal.entity';
 import { AnimalEntidadController } from './animal_entidad/animal_entidad.controller';
 import { AnimalEntidadService } from './animal_entidad/animal_entidad.service';
 import { AnimalEntidadModule } from './animal_entidad/animal_entidad.module';
@@ -58,7 +62,7 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
       username: 'root',
       password: 'root',
       database: 'prueva',
-      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres],
+      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres, Relacion_Persona_Animal],
       synchronize: true,
     }),
       UsersModule,
@@ -72,10 +76,14 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
       ColoniasModule,
       AnimalesModule,
       DonacionesViveresModule,
+      RelacionPersonaAnimalModule
+      DonacionesViveresModule,
       AnimalEntidadModule,
       AnimalVeterinarioModule
   ],
 
+  controllers: [AppController,UsersController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, RelacionPersonaAnimalController],
+  providers: [AppService,UsersService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, RelacionPersonaAnimalService],
   controllers: [AppController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, UsersController, AnimalEntidadController],
   providers: [AppService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, UsersService, AnimalEntidadService],
   

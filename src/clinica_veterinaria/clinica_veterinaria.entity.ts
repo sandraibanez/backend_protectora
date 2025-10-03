@@ -3,7 +3,7 @@ import { Medicacion } from 'src/medicacion/medicacion.entity';
 import { Animal_Veterinario } from 'src/animal_veterinario/animal_veterinario.entity';
 import { Protectoras } from 'src/protectoras/protectoras.entity';
 
-@Entity()
+@Entity('clinica_veterinaria')
 
 export class Clinica_veterinaria {
   @PrimaryGeneratedColumn()

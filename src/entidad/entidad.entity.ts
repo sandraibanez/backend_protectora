@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn,ManyToMany , JoinTable, OneToMan
 import { Animales } from 'src/animales/animales.entity';
 import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
 
-@Entity()
+@Entity('entidad')
 
 export class Entidad {
   @PrimaryGeneratedColumn()

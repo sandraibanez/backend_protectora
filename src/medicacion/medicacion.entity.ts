@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
 import { Animales } from 'src/animales/animales.entity';
 import { DateDataType } from 'sequelize';
-@Entity()
+@Entity('medicacion')
 
 export class Medicacion {
   @PrimaryGeneratedColumn()
@@ -18,6 +18,14 @@ export class Medicacion {
 
   @Column()
   dosis: string;
+
+  @Column()
+  foto_receta: string;
+
+
+  @ManyToOne(() => Animales, (animales) => animales.id)
+  animales: Animales
+
 
   @ManyToOne(() => Animales, (animales)=> animales.id)
     animales: Animales[];
