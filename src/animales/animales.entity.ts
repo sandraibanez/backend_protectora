@@ -1,13 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, OneToMany, ManyToOne } from 'typeorm';
 import { User } from 'src/users/users.entity';
 import { Medicacion } from 'src/medicacion/medicacion.entity';
 import { Relacion_Persona_Animal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
-import { Protectoras } from 'src/protectoras/protectoras.entity';
-@Entity('animales')
 import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
 import { Animal_Veterinario } from 'src/animal_veterinario/animal_veterinario.entity';
 import { Protectoras } from 'src/protectoras/protectoras.entity';
+
 @Entity('animales') 
 export class Animales {
   @PrimaryGeneratedColumn()
@@ -49,9 +47,6 @@ export class Animales {
   @ManyToMany(() => User)
   @JoinTable()
   personas: User[]
-
-  @OneToMany(()=>Medicacion, (medicacion)=> medicacion.id)
-    medicacion: Medicacion
 
   @OneToMany(() => Animal_Entidad, animal_entidad => animal_entidad.animales)
   animal_entidad: Animal_Entidad[];

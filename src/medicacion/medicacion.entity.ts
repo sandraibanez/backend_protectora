@@ -26,7 +26,4 @@ export class Medicacion {
   @ManyToOne(() => Animales, (animales) => animales.id)
   animales: Animales
 
-
-  @ManyToOne(() => Animales, (animales)=> animales.id)
-    animales: Animales[];
 }

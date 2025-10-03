@@ -76,17 +76,13 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
       ColoniasModule,
       AnimalesModule,
       DonacionesViveresModule,
-      RelacionPersonaAnimalModule
-      DonacionesViveresModule,
+      RelacionPersonaAnimalModule,
       AnimalEntidadModule,
       AnimalVeterinarioModule
   ],
 
-  controllers: [AppController,UsersController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, RelacionPersonaAnimalController],
-  providers: [AppService,UsersService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, RelacionPersonaAnimalService],
-  controllers: [AppController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, UsersController, AnimalEntidadController],
-  providers: [AppService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, UsersService, AnimalEntidadService],
-  
+  controllers: [AppController,UsersController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, RelacionPersonaAnimalController, AnimalEntidadController],
+  providers: [AppService,UsersService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, RelacionPersonaAnimalService, AnimalEntidadService], 
 
 })
 export class AppModule {
