@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn,ManyToMany , JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn,ManyToMany , JoinTable, OneToMany } from 'typeorm';
 import { Animales } from 'src/animales/animales.entity';
+import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
 
 @Entity()
 
@@ -13,7 +14,6 @@ export class Entidad {
   @Column()
   tipo: string;
 
-  @ManyToMany(()=> Animales)
-  @JoinTable()
-    receta: Animales[]
+  @OneToMany(()=> Animal_Entidad, animal_entidad => animal_entidad.entidades)
+  animal_entidad: Animal_Entidad[];
 }

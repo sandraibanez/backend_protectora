@@ -1,8 +1,10 @@
+import { Animales } from 'src/animales/animales.entity';
+import { Clinica_veterinaria } from 'src/clinica_veterinaria/clinica_veterinaria.entity';
 import { Colonias } from 'src/colonias/colonias.entity';
 import { DonacionesViveres } from 'src/donaciones_viveres/donaciones_viveres.entity';
 import { Gastos } from 'src/gastos/gastos.entity';
 import { Ingresos } from 'src/ingresos/ingresos.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity('protectoras') 
 export class Protectoras {
@@ -18,6 +20,9 @@ export class Protectoras {
     @Column({ length: 15 })
     telefono: string;
 
+    @ManyToOne(() => Animales, animal => animal.protectora)
+    animales: Animales;
+
     @OneToMany(() => Colonias, colonia => colonia.protectora)
     colonias: Colonias[];
 
@@ -29,5 +34,9 @@ export class Protectoras {
 
     @OneToMany(() => Ingresos, ingreso => ingreso.protectora)
     ingresos: Ingresos[];
+
+    @ManyToMany(() => Clinica_veterinaria, clinica => clinica.protectora)
+    @JoinTable()
+    clinicas: Clinica_veterinaria[];
 
 }

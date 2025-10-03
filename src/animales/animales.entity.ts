@@ -1,6 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, OneToMany, ManyToOne } from 'typeorm';
 import { User } from 'src/users/users.entity';
 import { Medicacion } from 'src/medicacion/medicacion.entity';
+import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
+import { Animal_Veterinario } from 'src/animal_veterinario/animal_veterinario.entity';
+import { Protectoras } from 'src/protectoras/protectoras.entity';
 @Entity('animales') 
 export class Animales {
   @PrimaryGeneratedColumn()
@@ -37,4 +40,14 @@ export class Animales {
 
   @OneToMany(()=>Medicacion, (medicacion)=> medicacion.id)
     medicacion: Medicacion
+
+  @OneToMany(() => Animal_Entidad, animal_entidad => animal_entidad.animales)
+  animal_entidad: Animal_Entidad[];
+
+  @OneToMany(() => Animal_Veterinario, animal_veterinario => animal_veterinario.animales)
+  animal_veterinario: Animal_Veterinario[];
+
+  @ManyToOne(() => Protectoras, protectora => protectora.id)
+  protectora: Protectoras;
+    
 }

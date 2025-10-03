@@ -19,10 +19,6 @@ export class Medicacion {
   @Column()
   dosis: string;
 
-  
-
   @ManyToOne(() => Animales, (animales)=> animales.id)
-    animales: Animales
-
-
+    animales: Animales[];
 }
