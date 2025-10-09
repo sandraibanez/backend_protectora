@@ -47,11 +47,14 @@ import { RelacionPersonaAnimalController } from './relacion_persona_animal/relac
 import { RelacionPersonaAnimalService } from './relacion_persona_animal/relacion_persona_animal.service';
 import { RelacionPersonaAnimalModule } from './relacion_persona_animal/relacion_persona_animal.module';
 import { Relacion_Persona_Animal } from './relacion_persona_animal/relacion_persona_animal.entity';
+import { Animal_Entidad } from './animal_entidad/animal_entidad.entity';
 import { AnimalEntidadController } from './animal_entidad/animal_entidad.controller';
 import { AnimalEntidadService } from './animal_entidad/animal_entidad.service';
 import { AnimalEntidadModule } from './animal_entidad/animal_entidad.module';
 import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario.module';
-
+import { AnimalVeterinarioController } from './animal_veterinario/animal_veterinario.controller';
+import { AnimalVeterinarioService } from './animal_veterinario/animal_veterinario.service';
+import { Animal_Veterinario } from './animal_veterinario/animal_veterinario.entity';
 @Module({
   imports: [
     
@@ -62,11 +65,10 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
       username: 'root',
       password: 'root',
       database: 'prueva',
-      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres, Relacion_Persona_Animal],
+      entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres, Relacion_Persona_Animal, Animal_Entidad, Animal_Veterinario],
       synchronize: true,
     }),
       UsersModule,
-      AnimalesModule,
       EntidadModule,
       MedicacionModule,
       ClinicaVeterinariaModule,
@@ -74,15 +76,15 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
       GastosModule,
       ProtectorasModule,
       ColoniasModule,
-      AnimalesModule,
       DonacionesViveresModule,
       RelacionPersonaAnimalModule,
       AnimalEntidadModule,
-      AnimalVeterinarioModule
+      AnimalVeterinarioModule, 
+      AnimalesModule
   ],
 
-  controllers: [AppController,UsersController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, RelacionPersonaAnimalController, AnimalEntidadController],
-  providers: [AppService,UsersService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, RelacionPersonaAnimalService, AnimalEntidadService], 
+  controllers: [AppController,UsersController, IngresosController, GastosController, ProtectorasController, ColoniasController, AnimalesController, DonacionesViveresController, EntidadController, MedicacionController, ClinicaVeterinariaController, RelacionPersonaAnimalController, AnimalEntidadController, AnimalVeterinarioController],
+  providers: [AppService,UsersService, IngresosService, GastosService, ProtectorasService, ColoniasService, AnimalesService, DonacionesViveresService, EntidadService, MedicacionService, ClinicaVeterinariaService, RelacionPersonaAnimalService, AnimalEntidadService, AnimalVeterinarioService], 
 
 })
 export class AppModule {

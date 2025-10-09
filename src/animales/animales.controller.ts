@@ -10,9 +10,9 @@ export class AnimalesController {
   // getHello(): string {
   //   return this.usersService.getHello();
   // }
-  @Get()
-  findAll() {
-    return this.AnimalesService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.AnimalesService.findAll();
+  // }
   
 }
