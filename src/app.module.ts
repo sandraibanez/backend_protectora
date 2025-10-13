@@ -55,13 +55,14 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
 import { AnimalVeterinarioController } from './animal_veterinario/animal_veterinario.controller';
 import { AnimalVeterinarioService } from './animal_veterinario/animal_veterinario.service';
 import { Animal_Veterinario } from './animal_veterinario/animal_veterinario.entity';
+// import animalesRepository
 @Module({
   imports: [
     
       TypeOrmModule.forRoot({
       type: 'mariadb',
-      host: 'database',
-      port: 3306,
+      host: 'localhost',
+      port: 2222,
       username: 'root',
       password: 'root',
       database: 'prueva',
