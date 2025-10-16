@@ -27,34 +27,34 @@ export class CreateAnimalDto {
 
 
 
-  @IsOptional()
-  @IsNumber()
-  protectoraId?: number;
+  // @IsOptional()
+  // @IsNumber()
+  // protectoraId?: number;
 
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  personasIds?: number[];
+  // @IsOptional()
+  // @IsArray()
+  // @IsNumber({}, { each: true })
+  // personasIds?: number[];
 
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  medicacionIds?: number[];
+  // @IsOptional()
+  // @IsArray()
+  // @IsNumber({}, { each: true })
+  // medicacionIds?: number[];
 
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  relacionesIds?: number[];
+  // @IsOptional()
+  // @IsArray()
+  // @IsNumber({}, { each: true })
+  // relacionesIds?: number[];
 
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  animalEntidadIds?: number[];
+  // @IsOptional()
+  // @IsArray()
+  // @IsNumber({}, { each: true })
+  // animalEntidadIds?: number[];
 
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  animalVeterinarioIds?: number[];
+  // @IsOptional()
+  // @IsArray()
+  // @IsNumber({}, { each: true })
+  // animalVeterinarioIds?: number[];
 }
 export class UpdateAnimales {
   @IsOptional()
@@ -95,44 +95,48 @@ export class UpdateAnimales {
   @IsDateString()
   f_nacimiento?: Date;
 
-  @IsInt()
   @IsOptional()
-  @Min(0)
-  @Max(1)
-  protectoraId?: number;
+  @IsBoolean()
+  esterilizado?: boolean;
 
-  @IsInt()
-  @IsOptional()
-  @Min(0)
-  @Max(1)
-  @IsArray()
-  personasIds?: number;
+  // @IsInt()
+  // @IsOptional()
+  // @Min(0)
+  // @Max(1)
+  // protectoraId?: number;
 
-  @IsInt()
-  @IsOptional()
-  @Min(0)
-  @Max(1)
-  @IsArray()
-  medicacionIds?: number;
+  // @IsInt()
+  // @IsOptional()
+  // @Min(0)
+  // @Max(1)
+  // @IsArray()
+  // personasIds?: number;
 
-  @IsInt()
-  @IsOptional()
-  @Min(0)
-  @Max(1)
-  @IsArray()
-  relacionesIds?: number;
+  // @IsInt()
+  // @IsOptional()
+  // @Min(0)
+  // @Max(1)
+  // @IsArray()
+  // medicacionIds?: number;
 
-  @IsInt()
-  @IsOptional()
-  @Min(0)
-  @Max(1)
-  @IsArray()
-  animalEntidadIds?: number;
+  // @IsInt()
+  // @IsOptional()
+  // @Min(0)
+  // @Max(1)
+  // @IsArray()
+  // relacionesIds?: number;
 
-  @IsInt()
-  @IsOptional()
-  @Min(0)
-  @Max(1)
-  @IsArray()
-  animalVeterinarioIds?: number;
+  // @IsInt()
+  // @IsOptional()
+  // @Min(0)
+  // @Max(1)
+  // @IsArray()
+  // animalEntidadIds?: number;
+
+  // @IsInt()
+  // @IsOptional()
+  // @Min(0)
+  // @Max(1)
+  // @IsArray()
+  // animalVeterinarioIds?: number;
 }
