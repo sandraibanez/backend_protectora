@@ -5,13 +5,13 @@ FROM node:20-alpine
 WORKDIR /web
 
 # Copia los archivos de tu proyecto (solo los necesarios para instalar)
-COPY ./backend/package*.json ./
+COPY package*.json ./
 
 # Instala dependencias
 RUN npm install pm2 -g && npm install
 
 # Copia el resto del código
-COPY ./backend .
+COPY . .
 
 # Expone el puerto (el que usa NestJS o Express)
 EXPOSE 3000
