@@ -22,7 +22,7 @@ export class Clinica_veterinaria {
   @JoinTable()
   receta: Medicacion[]
 
-  @ManyToOne(() => Animal_Veterinario, animal_veterinario => animal_veterinario.clinicas)
+  @ManyToOne(() => Animal_Veterinario, animal_veterinario => animal_veterinario.id)
   animal_veterinario: Animal_Veterinario;
 
   @ManyToMany(() => Protectoras, protectora => protectora.id)
