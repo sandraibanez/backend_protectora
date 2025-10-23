@@ -6,6 +6,7 @@ import { Clinica_veterinaria } from './clinica_veterinaria.entity';
 @Module({
     imports: [TypeOrmModule.forFeature([Clinica_veterinaria])],
     controllers: [ClinicaVeterinariaController],
-    providers: [ClinicaVeterinariaService]
+    providers: [ClinicaVeterinariaService],
+    exports: [TypeOrmModule]
 })
 export class ClinicaVeterinariaModule { }

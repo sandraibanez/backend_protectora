@@ -36,10 +36,10 @@ export class CreateAnimalDto {
   // @IsNumber({}, { each: true })
   // personasIds?: number[];
 
-  // @IsOptional()
-  // @IsArray()
-  // @IsNumber({}, { each: true })
-  // medicacionIds?: number[];
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  medicacionIds?: number[];
 
   // @IsOptional()
   // @IsArray()
@@ -112,12 +112,12 @@ export class UpdateAnimales {
   // @IsArray()
   // personasIds?: number;
 
-  // @IsInt()
-  // @IsOptional()
-  // @Min(0)
-  // @Max(1)
-  // @IsArray()
-  // medicacionIds?: number;
+  @IsInt()
+  @IsOptional()
+  @Min(0)
+  @Max(1)
+  @IsArray()
+  medicacionIds?: number;
 
   // @IsInt()
   // @IsOptional()

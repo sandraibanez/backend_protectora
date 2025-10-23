@@ -14,6 +14,6 @@ export class Entidad {
   @Column()
   tipo: string;
 
-  @OneToMany(()=> Animal_Entidad, animal_entidad => animal_entidad.entidades)
+  @OneToMany(()=> Animal_Entidad, animal_entidad => animal_entidad.id)
   animal_entidad: Animal_Entidad[];
 }

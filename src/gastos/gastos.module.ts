@@ -7,5 +7,6 @@ import { GastosController } from './gastos.controller';
   imports: [TypeOrmModule.forFeature([Gastos])],
   controllers: [GastosController],
   providers: [GastosService],
+  exports: [TypeOrmModule]
 })
 export class GastosModule { }

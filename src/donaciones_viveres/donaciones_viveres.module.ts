@@ -7,5 +7,6 @@ import { DonacionesViveresService } from './donaciones_viveres.service';
   imports: [TypeOrmModule.forFeature([DonacionesViveres])],
   controllers: [DonacionesViveresController],
   providers: [DonacionesViveresService],
+  exports: [TypeOrmModule]
 })
 export class DonacionesViveresModule { }

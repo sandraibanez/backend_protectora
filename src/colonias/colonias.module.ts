@@ -7,5 +7,6 @@ import { ColoniasController } from './colonias.controller';
   imports: [TypeOrmModule.forFeature([Colonias])],
   controllers: [ColoniasController],
   providers: [ColoniasService],
+  exports: [TypeOrmModule]
 })
 export class ColoniasModule { }
