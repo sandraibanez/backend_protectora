@@ -7,6 +7,6 @@ import { AnimalEntidadService } from './animal_entidad.service';
     imports: [TypeOrmModule.forFeature([Animal_Entidad])],
     controllers: [AnimalEntidadController],
     providers: [AnimalEntidadService],
-  
+    exports: [TypeOrmModule]
 })
 export class AnimalEntidadModule { }

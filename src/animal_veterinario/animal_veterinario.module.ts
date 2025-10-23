@@ -6,6 +6,8 @@ import { Animal_Veterinario } from './animal_veterinario.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Animal_Veterinario])],
   controllers: [AnimalVeterinarioController],
-  providers: [AnimalVeterinarioService]
+  providers: [AnimalVeterinarioService],
+  exports: [TypeOrmModule]
 })
 export class AnimalVeterinarioModule {}
+

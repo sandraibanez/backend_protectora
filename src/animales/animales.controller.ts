@@ -17,7 +17,7 @@ export class AnimalesController {
   getAnimal(@Param('id') id: string) {
     const animalId = parseInt(id);
     if (isNaN(animalId)) {
-      throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Invalid animal ID', HttpStatus.BAD_REQUEST);
     }
     return this.AnimalesService.getAnimal(animalId);
   }

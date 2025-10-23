@@ -67,7 +67,7 @@ import { Animal_Veterinario } from './animal_veterinario/animal_veterinario.enti
       password: '1234',
       database: 'backend',
       entities: [User, Animales, Entidad, Medicacion, Clinica_veterinaria, Ingresos, Gastos, Protectoras, Colonias, DonacionesViveres, Relacion_Persona_Animal, Animal_Entidad, Animal_Veterinario],
-      synchronize: true,
+      synchronize: false,
     }),
       UsersModule,
       EntidadModule,

@@ -7,11 +7,11 @@ export class Animal_Entidad {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToMany(() => Animales, (animales) => animales.id)
-    animales: Animales[]; 
+    @OneToMany(() => Animales, (animales) => animales.animal_entidad)
+    animales: Animales; 
     
-    @ManyToOne(() => Entidad, (entidad) => entidad.id)
-    entidades: Entidad[];
+    @ManyToOne(() => Entidad, (entidad) => entidad.animal_entidad)
+    entidades: Entidad;
 
     @Column({ type: 'date' })
     fecha: Date;
