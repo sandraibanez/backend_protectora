@@ -17,8 +17,8 @@ export class Protectoras {
     @Column({ length: 100 })
     direccion: string;  
 
-    @Column({ length: 15 })
-    telefono: string;
+    @Column()
+    telefono: number;
 
     @ManyToOne(() => Animales, animal => animal.protectora)
     animales: Animales;

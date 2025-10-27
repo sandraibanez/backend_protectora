@@ -7,5 +7,6 @@ import { ProtectorasController } from './protectoras.controller';
   imports: [TypeOrmModule.forFeature([Protectoras])],
   controllers: [ProtectorasController],
   providers: [ProtectorasService],
+  exports:[TypeOrmModule]
 })
 export class ProtectorasModule { }

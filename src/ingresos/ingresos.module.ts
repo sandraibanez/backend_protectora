@@ -7,5 +7,6 @@ import { IngresosService } from './ingresos.service';
   imports: [TypeOrmModule.forFeature([Ingresos])],
   controllers: [IngresosController],
   providers: [IngresosService],
+  exports: [TypeOrmModule]
 })
 export class IngresosModule { }
