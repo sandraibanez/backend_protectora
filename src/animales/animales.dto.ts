@@ -119,12 +119,13 @@ export class UpdateAnimales {
   @IsArray()
   medicacionIds?: number;
 
-  // @IsInt()
-  // @IsOptional()
-  // @Min(0)
-  // @Max(1)
-  // @IsArray()
-  // relacionesIds?: number;
+
+  @IsInt()
+  @IsOptional()
+  @Min(0)
+  @Max(1)
+  @IsArray()
+  relacionesIds?: number;
 
   // @IsInt()
   // @IsOptional()
