@@ -6,6 +6,7 @@ import { Relacion_Persona_Animal } from './relacion_persona_animal.entity';
 @Module({
     imports: [TypeOrmModule.forFeature([Relacion_Persona_Animal])],
     controllers: [RelacionPersonaAnimalController],
-    providers: [RelacionPersonaAnimalService]
+    providers: [RelacionPersonaAnimalService],
+    exports:[TypeOrmModule]
 })
 export class RelacionPersonaAnimalModule { }
