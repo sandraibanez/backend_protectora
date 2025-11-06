@@ -3,11 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Animales } from './animales.entity';
 import { CreateAnimalDto, UpdateAnimales } from './animales.dto';
+import { Protectoras } from 'src/protectoras/protectoras.entity';
 @Injectable()
 export class AnimalesService {
     constructor(
         @InjectRepository(Animales)
         private readonly animalesRepository: Repository<Animales>,
+
+        @InjectRepository(Protectoras)
+        private readonly protectorasRepository: Repository<Protectoras>
+
     ) { }
     findAll(): Promise<Animales[]> {
         return this.animalesRepository.find();
@@ -23,11 +28,12 @@ export class AnimalesService {
         }
     }
     async createAnimal(createAnimalDto: CreateAnimalDto): Promise<Animales> {
+        // const protectora = await this.protectorasRepository.findOneBy({ id });
+        
         const animal = await this.animalesRepository.create(createAnimalDto);
-        // const passwordHash = await bcrypt.hash(await usuario.password, 10); 
-        // usuario.password = passwordHash;
         return this.animalesRepository.save(animal);
     }
+
     async updateAnimal(updateAnimal: UpdateAnimales): Promise<Animales> {
         const animal = await this.animalesRepository.findOne({
             where: { id: updateAnimal.id },

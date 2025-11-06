@@ -25,11 +25,9 @@ export class CreateAnimalDto {
   @IsBoolean()
   esterilizado: boolean;
 
-
-
-  // @IsOptional()
-  // @IsNumber()
-  // protectoraId?: number;
+  @IsOptional()
+  @IsNumber()
+  protectoraId?: number;
 
   // @IsOptional()
   // @IsArray()
