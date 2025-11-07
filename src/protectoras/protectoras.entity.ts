@@ -20,7 +20,7 @@ export class Protectoras {
     @Column()
     telefono: number;
 
-    @ManyToOne(() => Animales, animal => animal.protectora)
+    @ManyToOne(() => Animales, animal => animal.id)
     animales: Animales;
 
     @OneToMany(() => Colonias, colonia => colonia.protectora)
