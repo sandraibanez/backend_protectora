@@ -1,57 +1,47 @@
-import { IsString, IsDateString, IsBoolean, IsOptional, IsNumber, IsArray, IsInt, Length, Min, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-export class CreateAnimalEntidadDto{
+import { IsString, IsDateString, IsInt, IsOptional } from 'class-validator';
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    @IsOptional()
-    @Min(0)
-    @Max(1)
-    animalesId: number;
+export class CreateAnimalEntidadDto {
+  @ApiProperty({ example: '2025-04-18', description: 'Fecha de registro del animal en la entidad' })
+  @IsDateString()
+  fecha: Date;
 
-    //@({ example: 1 })
-    // @IsInt()
-    // @IsOptional()
-    // @Min(0)
-    // @Max(1)
-    // entidadesId: number;
+  @ApiProperty({ example: 'Calle 568', description: 'Ubicación del animal dentro de la entidad' })
+  @IsString()
+  ubicacion: string;
 
-    @ApiProperty({ example: '2025-11-25' })
-    @IsDateString()
-    fecha: Date;
+  @ApiProperty({ example: 1, description: 'ID del animal' })
+  @IsInt()
+  animal: number;
 
-    @ApiProperty({ example: 'Calle 568' })
-    @IsString()
-    ubicacion: string;
+  @ApiProperty({ example: 2, description: 'ID de la entidad' })
+  @IsInt()
+  entidad: number;
 }
 
-export class UpdateAnimalEntidad{
-    @ApiProperty({ example: 1 })
-    @IsOptional()
-    @IsInt()
-    id?: number;
+export class UpdateAnimalEntidadDto {
+  @ApiProperty({ example: 5, description: 'ID del registro de animal-entidad' })
+  @IsOptional()
+  @IsInt()
+  id_animal_entidad?: number;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    @IsOptional()
-    @Min(0)
-    @Max(1)
-    animalesId: number;
+  @ApiProperty({ example: 1, description: 'ID del animal' })
+  @IsOptional()
+  @IsInt()
+  animal?: number;
 
-    //@ApiProperty({ example: 1 })
-    // @IsInt()
-    // @IsOptional()
-    // @Min(0)
-    // @Max(1)
-    // entidadesId: number;
+  @ApiProperty({ example: 2, description: 'ID de la entidad' })
+  @IsOptional()
+  @IsInt()
+  entidad?: number;
 
-    @ApiProperty({ example: '2025-11-30' })
-    @IsOptional()
-    @IsDateString()
-    fecha: Date;
+  @ApiProperty({ example: '2025-05-01', description: 'Fecha de actualización del registro' })
+  @IsOptional()
+  @IsDateString()
+  fecha?: Date;
 
-    @ApiProperty({ example: 'Calle 568' })
-    @IsOptional()
-    @IsString()
-    ubicacion: string;
+  @ApiProperty({ example: 'Calle 111', description: 'Ubicación actual del animal dentro de la entidad' })
+  @IsOptional()
+  @IsString()
+  ubicacion?: string;
 }

@@ -1,42 +1,32 @@
-import { IsString, IsDateString, IsBoolean, IsOptional, IsNumber, IsArray, IsInt, Length, Min, Max, IsIn } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional, IsInt, IsArray } from 'class-validator';
+
 export class CreateEntidadDto {
-    @ApiProperty({ example: 'Nerea' })
-    @IsString()
-    nombre: string;
+  @ApiProperty({ example: 'Protectora Felina', description: 'Nombre de la entidad' })
+  @IsString()
+  nombre: string;
 
-    @ApiProperty({ example: 'Civil' })
-    @IsString()
-    tipo: string;
+  @ApiProperty({ example: 'Civil', description: 'Tipo de entidad (por ejemplo: Civil, Municipal...)' })
+  @IsString()
+  tipo: string;
 
-    @ApiProperty({ example: 1 })
-    @IsOptional()
-    @IsArray()
-    @IsNumber({}, { each: true })
-    animal_entidadId?: number[];
 }
-export class UpdateEntidad{
-    @ApiProperty({ example: 1 })
-    @IsOptional()
-    @IsInt()
-    id?: number;
 
-    @ApiProperty({ example: 'Claudia' })
-    @IsString()
-    @IsOptional()
-    @Length(1, 50)
-    nombre?: string;
+export class UpdateEntidadDto {
 
-    @ApiProperty({ example: 'Civil' })
-    @IsString()
-    @IsOptional()
-    @Length(1, 50)
-    tipo?: string;
+  @ApiProperty({ example: 1, description: 'ID de la entidad a actualizar' })
+  @IsOptional()
+  @IsInt()
+  id?: number;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    @IsOptional()
-    @Min(0)
-    @Max(1)
-    animal_entidadId?: number;
+  @ApiProperty({ example: 'Refugio Canino Esperanza', description: 'Nombre actualizado de la entidad' })
+  @IsOptional()
+  @IsString()
+  nombre?: string;
+
+  @ApiProperty({ example: 'Municipal', description: 'Tipo actualizado de la entidad' })
+  @IsOptional()
+  @IsString()
+  tipo?: string;
+
 }

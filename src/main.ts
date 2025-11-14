@@ -4,12 +4,11 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  
   const config = new DocumentBuilder()
-    .setTitle('Protectora de Animales')
-    .setDescription('API para gestión de animales, usuarios y entidades')
+    .setTitle('Protectora')
+    .setDescription('The cats API description')
     .setVersion('1.0')
-    .addTag('Users')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);

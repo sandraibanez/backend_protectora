@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { RelacionPersonaAnimalService } from './relacion_persona_animal.service';
 import { RelacionPersonaAnimalController } from './relacion_persona_animal.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Relacion_Persona_Animal } from './relacion_persona_animal.entity';
+import { RelacionPersonaAnimal } from './relacion_persona_animal.entity';
+import { Animal } from 'src/animal/animal.entity';
+import { User } from 'src/user/user.entity';
 @Module({
-    imports: [TypeOrmModule.forFeature([Relacion_Persona_Animal])],
+    imports: [TypeOrmModule.forFeature([RelacionPersonaAnimal, Animal, User])],
     controllers: [RelacionPersonaAnimalController],
     providers: [RelacionPersonaAnimalService],
     exports:[TypeOrmModule]

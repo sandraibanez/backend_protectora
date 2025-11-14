@@ -1,48 +1,91 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { DonacionesViveres } from './donaciones_viveres.entity';
-import { CreateAnimalDto } from 'src/animales/animales.dto';
-import { CreateDonaciones_ViveresDto, UpdateDonaciones_Viveres } from './donaciones_viveres.dto';
+import { Repository } from 'typeorm';
+import { CreateDonacionesViveresDto, UpdateDonacionesViveresDto } from './donaciones_viveres.dto';
+import { Protectora } from 'src/protectora/protectora.entity';
 
 @Injectable()
 export class DonacionesViveresService {
     constructor(
         @InjectRepository(DonacionesViveres)
-        private readonly Donaciones_ViveresRepository: Repository<DonacionesViveres>,
-    ) { }
+        private readonly donacionesRepository: Repository<DonacionesViveres>,
+
+        @InjectRepository(Protectora)
+        private readonly protectoraRepository: Repository<Protectora>,
+    ) {}
+
     findAll(): Promise<DonacionesViveres[]> {
-        return this.Donaciones_ViveresRepository.find();
+        return this.donacionesRepository.find({
+            relations: ['protectora'], 
+        });
     }
 
-    async getDonaciones_Viveres(id: number): Promise<DonacionesViveres | string | null> {
-        const DonacionesViveres = await this.Donaciones_ViveresRepository.findOneBy({ id });
-
-        if (DonacionesViveres != null) {
-            return DonacionesViveres;
-        } else {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-        }
-    }
-    async createDonaciones_Viveres(createDonaciones_ViveresDto: CreateDonaciones_ViveresDto): Promise<DonacionesViveres> {
-        const DonacionesViveres = await this.Donaciones_ViveresRepository.create(createDonaciones_ViveresDto);
-        
-        return this.Donaciones_ViveresRepository.save(DonacionesViveres);
-    }
-    async updateDonaciones_Viveres(updateDonaciones_Viveres: UpdateDonaciones_Viveres): Promise<DonacionesViveres> {
-        const DonacionesViveres = await this.Donaciones_ViveresRepository.findOne({
-            where: { id: updateDonaciones_Viveres.id },
+    async getDonacionesViveres(id_donacion: number): Promise<DonacionesViveres> {
+        const donacion = await this.donacionesRepository.findOne({
+            where: { id_donacion },
+            relations: ['protectora'], 
         });
 
-        if (!DonacionesViveres) {
-            throw new Error('Donaciones Viveres no encontrado');
+        if (!donacion) {
+            throw new HttpException('Donación no encontrada', HttpStatus.NOT_FOUND);
+        }
+        return donacion;
+    }
+
+    async createDonacionesViveres(createDonacionesViveresDto: CreateDonacionesViveresDto): Promise<DonacionesViveres> {
+
+        // Validar protectora
+        const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createDonacionesViveresDto.protectora });
+        if (!protectora) {
+            throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
         }
 
-        this.Donaciones_ViveresRepository.merge(DonacionesViveres, updateDonaciones_Viveres);
-        return this.Donaciones_ViveresRepository.save(DonacionesViveres);
+        const donacion = this.donacionesRepository.create({ 
+            ...createDonacionesViveresDto,
+            protectora, 
+        });
+
+        return this.donacionesRepository.save(donacion);
     }
 
-    async deleteDonaciones_Viveres(id: number): Promise<void> {
-        await this.Donaciones_ViveresRepository.delete(id);
+    async updateDonacionesViveres(updateDonacionesViveresDto: UpdateDonacionesViveresDto): Promise<DonacionesViveres> {
+        const donacion = await this.donacionesRepository.findOne({
+            where: { id_donacion: updateDonacionesViveresDto.id_donacion },
+            relations: ['protectora'],
+        });
+
+        if (!donacion) {
+            throw new HttpException('Donación no encontrada', HttpStatus.NOT_FOUND);
+        }
+
+        // Actualizar protectora si se proporciona
+        if (updateDonacionesViveresDto.protectora !== undefined) {
+            const protectora = await this.protectoraRepository.findOneBy({ id_protectora: updateDonacionesViveresDto.protectora });
+            if (!protectora) {
+                throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
+            }
+            donacion.protectora = protectora;
+        }
+
+        // Merge solo los campos simples
+        const camposSimples = {
+            fecha: updateDonacionesViveresDto.fecha,
+            tipo: updateDonacionesViveresDto.tipo,
+            cantidad: updateDonacionesViveresDto.cantidad,
+            lugar: updateDonacionesViveresDto.lugar,
+        };
+        this.donacionesRepository.merge(donacion, camposSimples);
+
+        return this.donacionesRepository.save(donacion);
     }
+
+    async deleteDonacionesViveres(id_donacion: number): Promise<void> {
+      const donacion = await this.donacionesRepository.findOneBy({ id_donacion });
+      if (!donacion) {
+          throw new HttpException('Donación no encontrada', HttpStatus.NOT_FOUND);
+      }
+      await this.donacionesRepository.delete(id_donacion);
+  }
+
 }

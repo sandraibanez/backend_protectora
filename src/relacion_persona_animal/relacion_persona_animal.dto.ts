@@ -1,49 +1,77 @@
-import { IsDateString, IsEnum, IsInt, IsOptional } from "class-validator";
-import { TipoRelacion } from "./relacion_persona_animal.entity";
-import { ApiProperty } from '@nestjs/swagger';
+import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { TipoRelacion } from './relacion_persona_animal.entity';
 
 export class CreateRelacionPersonaAnimalDto {
-
-  @ApiProperty({ example: '2025-11-05' })
+  @ApiProperty({
+    example: '2025-04-15',
+    description: 'Fecha en la que se establece la relación entre la persona y el animal',
+  })
   @IsDateString()
-  fecha: Date;
+  fecha: string;
 
-  @ApiProperty({ example: 'acoge' })
+  @ApiProperty({
+    enum: TipoRelacion,
+    example: TipoRelacion.ADOPTA,
+    description: 'Tipo de relación entre la persona y el animal',
+  })
   @IsEnum(TipoRelacion)
   accion: TipoRelacion;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({
+    example: 3,
+    description: 'ID del usuario (persona) que realiza la acción sobre el animal',
+  })
   @IsInt()
-  personaId: number;
+  persona: number;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({
+    example: 1,
+    description: 'ID del animal implicado en la relación',
+  })
   @IsInt()
-  animalId: number;
+  animal: number;
 }
 
 export class UpdateRelacionPersonaAnimalDto {
-  @ApiProperty({ example: 1 })
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'ID único de la relación (solo para actualizaciones)',
+  })
   @IsOptional()
   @IsInt()
-  id?: number;
+  id_relacion?: number;
 
-  @ApiProperty({ example: '2025-11-07' })
+  @ApiPropertyOptional({
+    example: '2025-05-01',
+    description: 'Nueva fecha de la relación, si se desea actualizar',
+  })
   @IsOptional()
   @IsDateString()
-  fecha?: Date;
+  fecha?: string;
 
-  @ApiProperty({ example: 'adopta' })
+  @ApiPropertyOptional({
+    enum: TipoRelacion,
+    example: TipoRelacion.ACOGE,
+    description: 'Nuevo tipo de relación entre la persona y el animal',
+  })
   @IsOptional()
   @IsEnum(TipoRelacion)
   accion?: TipoRelacion;
 
-  @ApiProperty({ example: 1 })
+  @ApiPropertyOptional({
+    example: 4,
+    description: 'Nuevo ID del usuario (persona), si se desea cambiar',
+  })
   @IsOptional()
   @IsInt()
-  personaId?: number;
+  persona?: number;
 
-  @ApiProperty({ example: 1 })
+  @ApiPropertyOptional({
+    example: 9,
+    description: 'Nuevo ID del animal implicado, si se desea cambiar',
+  })
   @IsOptional()
   @IsInt()
-  animalId?: number;
+  animal?: number;
 }

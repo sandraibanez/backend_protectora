@@ -1,29 +1,30 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany, ManyToOne } from 'typeorm';
-import { Animales } from 'src/animales/animales.entity';
-import { Clinica_veterinaria } from 'src/clinica_veterinaria/clinica_veterinaria.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
+import { Animal } from 'src/animal/animal.entity';
+import { Veterinario } from 'src/veterinario/veterinario.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('animal_veterinario')
-export class Animal_Veterinario {
+@Entity('animalVeterinario')
+export class AnimalVeterinario {
 
-    @ApiProperty({ example: 1, description: 'ID de animal_veterinario' })
+    @ApiProperty({ example: 1, description: 'ID del registro de relación entre animal y veterinario' })
     @PrimaryGeneratedColumn()
-    id: number;
+    id_animalVeterinario: number;
 
-    @ApiProperty({ type: () => [Animales], description: 'Relaciones con animales' })
-    @OneToMany(() => Animales, animal => animal.animal_veterinario)
-    animales: Animales;
-
-    @ApiProperty({ type: () => [Clinica_veterinaria], description: 'Relaciones con clinica veterinaria' })
-    @ManyToOne(() => Clinica_veterinaria, clinica => clinica.animal_veterinario)
-    clinicas: Clinica_veterinaria;
-
-    @ApiProperty({ example: '2025-04-25', description: 'Fecha de la visita del animal' })
+    @ApiProperty({ example: '2025-04-05', description: 'Fecha de atención del animal por el veterinario' })
     @Column({ type: 'date' })
     fecha: Date;
 
-    @ApiProperty({ example: 'Sano', description: 'Diagnostico de la visita del animal' })
-    @Column({ length: 100 })
+    @ApiProperty({ example: 'Sano', description: 'Diagnóstico realizado al animal' })
+    @Column()
     diagnostico: string;
 
+    // @ApiProperty({ type: () => Animal, description: 'Animal relacionado con el registro' })
+    @OneToOne(() => Animal, (animal) => animal.id_animal, { eager: true })
+    @JoinColumn({ name: 'animal' })
+    animal: Animal;
+
+    @ApiProperty({ type: () => Veterinario, description: 'Veterinario que atiende al animal' })
+    @ManyToOne(() => Veterinario, (veterinario) => veterinario.id_veterinario, { eager: true })
+    @JoinColumn({ name: 'veterinario' })
+    veterinario: Veterinario;
 }

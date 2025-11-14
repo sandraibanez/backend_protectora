@@ -1,58 +1,49 @@
-import { IsString, IsDateString, IsBoolean, IsOptional, IsNumber, IsArray, IsInt, Length, Min, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsDateString, IsOptional, IsInt } from 'class-validator';
 
 export class CreateAnimalVeterinarioDto {
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    @IsOptional()
-    @Min(0)
-    @Max(1)
-    animalesId: number;
-
-    // @IsInt()
-    // @IsOptional()
-    // @Min(0)
-    // @Max(1)
-    // clinicasId: number;
-    @ApiProperty({ example: '2025-04-05' })
-    @IsOptional()
+    @ApiProperty({ example: '2025-04-05', description: 'Fecha de atención del animal por el veterinario' })
     @IsDateString()
     fecha: Date;
 
-    @ApiProperty({ example: 'Sano' })
+    @ApiProperty({ example: 'Sano', description: 'Diagnóstico realizado al animal' })
     @IsString()
-    @IsOptional()
     diagnostico: string;
+
+    @ApiProperty({ example: 1, description: 'ID del animal relacionado' })
+    @IsInt()
+    animal: number;
+
+    @ApiProperty({ example: 1, description: 'ID del veterinario que atiende al animal' })
+    @IsInt()
+    veterinario: number;
 }
 
-export class UpdateAnimalVeterinario{
+export class UpdateAnimalVeterinarioDto {
 
-    @ApiProperty({ example: 1 })
+    @ApiProperty({ example: 1, description: 'ID del registro de relación animal-veterinario' })
     @IsOptional()
     @IsInt()
-    id?: number;
+    id_animalVeterinario?: number;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
+    @ApiProperty({ example: 1, description: 'ID del animal relacionado' })
     @IsOptional()
-    @Min(0)
-    @Max(1)
-    animalesId: number;
+    @IsInt()
+    animal?: number;
 
-    // @IsInt()
-    // @IsOptional()
-    // @Min(0)
-    // @Max(1)
-    // clinicasId: number;
+    @ApiProperty({ example: 1, description: 'ID del veterinario que atiende al animal' })
+    @IsOptional()
+    @IsInt()
+    veterinario?: number;
 
-    @ApiProperty({ example: '2024-04-25' })
+    @ApiProperty({ example: '2025-04-05', description: 'Fecha de atención del animal por el veterinario' })
     @IsOptional()
     @IsDateString()
-    fecha: Date;
+    fecha?: Date;
 
-    @ApiProperty({ example: 'Sano' })
-    @IsString()
+    @ApiProperty({ example: 'Enfermo', description: 'Diagnóstico realizado al animal' })
     @IsOptional()
-    diagnostico: string;
+    @IsString()
+    diagnostico?: string;
 }

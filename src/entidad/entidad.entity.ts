@@ -1,24 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn,ManyToMany , JoinTable, OneToMany } from 'typeorm';
-import { Animales } from 'src/animales/animales.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('entidad')
-
+@Entity('entidades')
 export class Entidad {
-  @ApiProperty({ example: 1, description: 'ID de la entidad' })
+  @ApiProperty({ example: 1, description: 'ID único de la entidad' })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ example: 'Nerea', description: 'Nombre de la entidad' })
+  @ApiProperty({ example: 'Protectora Felina', description: 'Nombre de la entidad o persona responsable del rescate' })
   @Column()
   nombre: string;
 
-  @ApiProperty({ example: 'Civil', description: 'Si se trata de un civil o una entidad como un ayuntamiento el que rescata al animal' })
+  @ApiProperty({
+    example: 'Civil',
+    description: 'Tipo de entidad (por ejemplo: Civil, Ayuntamiento, Asociación, etc.)',
+  })
   @Column()
   tipo: string;
-  
-  @ApiProperty({ type: () => [Animal_Entidad], description: 'Relaciones con entidad' })
-  @OneToMany(()=> Animal_Entidad, animal_entidad => animal_entidad.id)
-  animal_entidad: Animal_Entidad[];
+
 }

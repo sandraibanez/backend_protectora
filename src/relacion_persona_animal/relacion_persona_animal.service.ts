@@ -1,48 +1,109 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Relacion_Persona_Animal } from './relacion_persona_animal.entity';
-import {CreateRelacionPersonaAnimalDto, UpdateRelacionPersonaAnimalDto } from './relacion_persona_animal.dto';
+import { RelacionPersonaAnimal } from './relacion_persona_animal.entity';
+import { CreateRelacionPersonaAnimalDto, UpdateRelacionPersonaAnimalDto } from './relacion_persona_animal.dto';
+import { User } from 'src/user/user.entity';
+import { Animal } from 'src/animal/animal.entity';
 
 @Injectable()
 export class RelacionPersonaAnimalService {
   constructor(
-        @InjectRepository(Relacion_Persona_Animal)
-        private readonly relacionRepository: Repository<Relacion_Persona_Animal>,
-    ) { }
-    findAll(): Promise<Relacion_Persona_Animal[]> {
-        return this.relacionRepository.find();
+    @InjectRepository(RelacionPersonaAnimal)
+    private readonly relacionRepository: Repository<RelacionPersonaAnimal>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Animal)
+    private readonly animalRepository: Repository<Animal>,
+  ) {}
+
+  findAll(): Promise<RelacionPersonaAnimal[]> {
+    return this.relacionRepository.find({
+      relations: ['persona', 'animal'],
+    });
+  }
+
+  async getRelacion(id_relacion: number): Promise<RelacionPersonaAnimal> {
+    const relacion = await this.relacionRepository.findOne({
+      where: { id_relacion },
+      relations: ['persona', 'animal'],
+    });
+
+    if (!relacion) {
+      throw new HttpException('Relación no encontrada', HttpStatus.NOT_FOUND);
     }
 
-    async getRelacion(id: number): Promise<Relacion_Persona_Animal | string | null> {
-        const relacion = await this.relacionRepository.findOneBy({ id });
+    return relacion;
+  }
 
-        if (relacion != null) {
-            return relacion;
-        } else {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-        }
+  async createRelacion(createDto: CreateRelacionPersonaAnimalDto): Promise<RelacionPersonaAnimal> {
+    const persona = await this.userRepository.findOneBy({ id_user: createDto.persona });
+    if (!persona) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.BAD_REQUEST);
     }
 
-    async createRelacion(createRelacionPersonaAnimalDto: CreateRelacionPersonaAnimalDto): Promise<Relacion_Persona_Animal> {
-        const relacion = await this.relacionRepository.create(createRelacionPersonaAnimalDto);
-        return this.relacionRepository.save(relacion);
+    const animal = await this.animalRepository.findOneBy({ id_animal: createDto.animal });
+    if (!animal) {
+      throw new HttpException('Animal no encontrado', HttpStatus.BAD_REQUEST);
     }
-    async updateRelacion(updateRelacionPersonaAnimalDto: UpdateRelacionPersonaAnimalDto): Promise<Relacion_Persona_Animal> {
-        const relacion = await this.relacionRepository.findOne({
-            where: { id: updateRelacionPersonaAnimalDto.id },
-        });
 
-        if (!relacion) {
-            throw new Error('Relacion no encontrada');
-        }
+    const relacion = this.relacionRepository.create({
+      fecha: new Date(createDto.fecha),
+      accion: createDto.accion,
+      persona,
+      animal,
+    });
 
-        this.relacionRepository.merge(relacion, updateRelacionPersonaAnimalDto);
-        return this.relacionRepository.save(relacion);
+    return this.relacionRepository.save(relacion);
+  }
+
+  async updateRelacion(updateDto: UpdateRelacionPersonaAnimalDto): Promise<RelacionPersonaAnimal> {
+    const relacion = await this.relacionRepository.findOne({
+      where: { id_relacion: updateDto.id_relacion },
+      relations: ['persona', 'animal'],
+    });
+
+    if (!relacion) {
+      throw new HttpException('Relación no encontrada', HttpStatus.NOT_FOUND);
     }
-    async deleteRelacion(id: number): Promise<void> {
-        await this.relacionRepository.delete(id);
-    }
-    
 
+    // Actualizar las relaciones si se pasan nuevos IDs
+    if (updateDto.persona !== undefined) {
+      const persona = await this.userRepository.findOneBy({ id_user: updateDto.persona });
+      if (!persona) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.BAD_REQUEST);
+      }
+      relacion.persona = persona;
+    }
+
+    if (updateDto.animal !== undefined) {
+      const animal = await this.animalRepository.findOneBy({ id_animal: updateDto.animal });
+      if (!animal) {
+        throw new HttpException('Animal no encontrado', HttpStatus.BAD_REQUEST);
+      }
+      relacion.animal = animal;
+    }
+
+    const camposSimples = this.relacionRepository.create({
+      fecha: updateDto.fecha,
+      accion: updateDto.accion,
+    });
+
+
+    this.relacionRepository.merge(relacion, camposSimples);
+
+    return this.relacionRepository.save(relacion);
+  }
+
+  async deleteRelacion(id_relacion: number): Promise<void> {
+    const relacion = await this.relacionRepository.findOneBy({ id_relacion });
+
+    if (!relacion) {
+      throw new HttpException('Relación no encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    await this.relacionRepository.delete(id_relacion);
+  }
 }

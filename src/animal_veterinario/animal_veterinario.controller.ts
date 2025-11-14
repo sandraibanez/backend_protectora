@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put} from '@nestjs/common';
 import { AnimalVeterinarioService } from './animal_veterinario.service';
-import { Animal_Veterinario } from './animal_veterinario.entity';
-import { CreateAnimalVeterinarioDto, UpdateAnimalVeterinario } from './animal_veterinario.dto';
+import { AnimalVeterinario } from './animal_veterinario.entity';
+import { CreateAnimalVeterinarioDto, UpdateAnimalVeterinarioDto } from './animal_veterinario.dto';
 import { promises } from 'dns';
 
 @Controller('animal-veterinario')
@@ -29,14 +29,14 @@ export class AnimalVeterinarioController {
   }
 
   @Put(':id')
-  updateAnimalVeterinario(@Param('id') id: string, @Body() updateAnimalVeterinario: UpdateAnimalVeterinario) {
+  updateAnimalVeterinario(@Param('id') id: string, @Body() updateAnimalVeterinario: UpdateAnimalVeterinarioDto) {
     const animalVeterinarioId = parseInt(id);
     if (isNaN(animalVeterinarioId)) {
       throw new HttpException('Invalid animal-veterinario ID', HttpStatus.BAD_REQUEST);
     }
     return this.AnimalVeterinarioService.updateAnimalVeterinario({
       ...updateAnimalVeterinario,
-      id: animalVeterinarioId,
+      id_animalVeterinario: animalVeterinarioId,
     });
   }
   

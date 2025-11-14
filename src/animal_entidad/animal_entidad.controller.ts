@@ -1,16 +1,16 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put} from '@nestjs/common';
 import { AnimalEntidadService } from './animal_entidad.service';
 import { Animal_Entidad } from './animal_entidad.entity';
-import { CreateAnimalEntidadDto, UpdateAnimalEntidad } from './animal_entidad.dto';
+import { CreateAnimalEntidadDto, UpdateAnimalEntidadDto } from './animal_entidad.dto';
 import { promises } from 'dns';
 
 @Controller('animal-entidad')
 export class AnimalEntidadController {
-  constructor(private readonly AnimalEntidadService: AnimalEntidadService) {}
+  constructor(private readonly animalEntidadService: AnimalEntidadService) {}
 
   @Get()
   findAll() {
-    return this.AnimalEntidadService.findAll();
+    return this.animalEntidadService.findAll();
   }
 
   @Get(':id')
@@ -19,22 +19,22 @@ export class AnimalEntidadController {
     if (isNaN(animalEntidadId)) {
       throw new HttpException('Invalid animal-entidad ID', HttpStatus.BAD_REQUEST);
     }
-    return this.AnimalEntidadService.getAnimalEntidad(animalEntidadId);
+    return this.animalEntidadService.getAnimalEntidad(animalEntidadId);
   }
   @Post()
   createAnimalEntidad(@Body() createAnimalEntidadDto: CreateAnimalEntidadDto) {
-    return this.AnimalEntidadService.createAnimalEntidad(createAnimalEntidadDto);
+    return this.animalEntidadService.createAnimalEntidad(createAnimalEntidadDto);
   }
 
   @Put(':id')
-  updateAnimalEntidad(@Param('id') id: string, @Body() updateAnimalEntidad: UpdateAnimalEntidad) {
+  updateAnimalEntidad(@Param('id') id: string, @Body() updateAnimalEntidadDto: UpdateAnimalEntidadDto) {
     const animalEntidadId = parseInt(id);
     if (isNaN(animalEntidadId)) {
       throw new HttpException('Invalid animal-entidad ID', HttpStatus.BAD_REQUEST);
     }
-    return this.AnimalEntidadService.updateAnimalEntidad({
-      ...updateAnimalEntidad,
-      id: animalEntidadId,
+    return this.animalEntidadService.updateAnimalEntidad({
+      ...updateAnimalEntidadDto,
+      id_animal_entidad: animalEntidadId,
     });
   }
   
@@ -44,6 +44,6 @@ export class AnimalEntidadController {
     if (isNaN(animalEntidadId)) {
       throw new HttpException('Invalid animal-entidad ID', HttpStatus.BAD_REQUEST);
     }
-    return this.AnimalEntidadService.deleteAnimalEntidad(animalEntidadId);
+    return this.animalEntidadService.deleteAnimalEntidad(animalEntidadId);
   }
 }

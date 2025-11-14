@@ -1,64 +1,57 @@
-import { IsString, IsDateString, IsBoolean, IsOptional, IsNumber, IsArray, IsInt, Length, Min, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsDateString, IsOptional, IsInt } from 'class-validator';
 
-export class CreateDonaciones_ViveresDto {
-  @ApiProperty({ example: 'Comida' })
+export class CreateDonacionesViveresDto {
+  @ApiProperty({ example: 'Alimento', description: 'Tipo de víveres donados' })
   @IsString()
   tipo: string;
 
-  @ApiProperty({ example: 'Calle Costera' })
+  @ApiProperty({ example: 'Calle Mayor 123', description: 'Lugar donde se donaron los víveres' })
   @IsString()
   lugar: string;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: 50, description: 'Cantidad de víveres donados' })
   @IsInt()
   cantidad: number;
 
-  @ApiProperty({ example: '2025-11-05' })
+  @ApiProperty({ example: '2025-06-01', description: 'Fecha de la donación' })
   @IsDateString()
   fecha: Date;
 
-  @ApiProperty({ example: 1})
-  @IsOptional()
-  @IsNumber()
-  protectoraId?: number;
-
-}
-export class UpdateDonaciones_Viveres {
-
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: 1, description: 'ID de la protectora relacionada', required: false })
   @IsOptional()
   @IsInt()
-  id?: number;
+  protectora?: number;
+}
 
-  @ApiProperty({ example: 'Comida' })
-  @IsString()
+export class UpdateDonacionesViveresDto {
+  @ApiProperty({ example: 2, description: 'ID de la donación a actualizar', required: false })
   @IsOptional()
-  @Length(1, 50)
+  @IsInt()
+  id_donacion?: number;
+
+  @ApiProperty({ example: 'Medicinas', description: 'Tipo de víveres a actualizar', required: false })
+  @IsOptional()
+  @IsString()
   tipo?: string;
 
-  @ApiProperty({ example: 'Calle 789' })
-  @IsString()
+  @ApiProperty({ example: 'Plaza del Sol 45', description: 'Lugar de la donación a actualizar', required: false })
   @IsOptional()
-  @Length(1, 50)
+  @IsString()
   lugar?: string;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: 30, description: 'Cantidad de víveres a actualizar', required: false })
   @IsOptional()
   @IsInt()
   cantidad?: number;
 
-  @ApiProperty({ example: '2025-11-05' })
+  @ApiProperty({ example: '2025-06-05', description: 'Fecha de la donación a actualizar', required: false })
   @IsOptional()
   @IsDateString()
   fecha?: Date;
 
-  @ApiProperty({ example: 1 })
-  @IsInt()
+  @ApiProperty({ example: 2, description: 'ID de la protectora a actualizar', required: false })
   @IsOptional()
-  @Min(0)
-  @Max(1)
-  protectoraId?: number;
-
-  
+  @IsInt()
+  protectora?: number;
 }

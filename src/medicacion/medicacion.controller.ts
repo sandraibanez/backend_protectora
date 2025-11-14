@@ -1,15 +1,15 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { MedicacionService } from './medicacion.service';
-import { CreateMedicacionDto, UpdateMedicacion } from './medicacion.dto';
+import { CreateMedicacionDto, UpdateMedicacionDto } from './medicacion.dto';
 
-@Controller('medicacion')
+@Controller('medicaciones')
 export class MedicacionController {
     // MedicacionService: any;
-  constructor(private readonly MedicacionService: MedicacionService) {}
+  constructor(private readonly medicacionService: MedicacionService) {}
 
   @Get()
   findAll() {
-    return this.MedicacionService.findAll();
+    return this.medicacionService.findAll();
   }
 
   @Get(':id')
@@ -18,22 +18,22 @@ export class MedicacionController {
     if (isNaN(medicacionId)) {
       throw new HttpException('Invalid medicacion ID', HttpStatus.BAD_REQUEST);
     }
-    return this.MedicacionService.getMedicacion(medicacionId);
+    return this.medicacionService.getMedicacion(medicacionId);
   }
   @Post()
   createMedicacion(@Body() createMedicacionDto: CreateMedicacionDto) {
-    return this.MedicacionService.createMedicacion(createMedicacionDto);
+    return this.medicacionService.createMedicacion(createMedicacionDto);
   }
 
   @Put(':id')
-  updateMedicacion(@Param('id') id: string, @Body() updateMedicacion: UpdateMedicacion) {
-    const Medicacion_id = parseInt(id);
-    if (isNaN(Medicacion_id)) {
+  updateMedicacion(@Param('id') id: string, @Body() updateMedicacionDto: UpdateMedicacionDto) {
+    const medicacionId = parseInt(id);
+    if (isNaN(medicacionId)) {
       throw new HttpException('Invalid medicacion ID', HttpStatus.BAD_REQUEST);
     }
-    return this.MedicacionService.updateMedicacion({
-      ...updateMedicacion,
-      id: Medicacion_id,
+    return this.medicacionService.updateMedicacion({
+      ...updateMedicacionDto,
+      id_medicacion: medicacionId,
     });
   }
   
@@ -43,6 +43,6 @@ export class MedicacionController {
     if (isNaN(medicacionId)) {
       throw new HttpException('Invalid medicacion ID', HttpStatus.BAD_REQUEST);
     }
-    return this.MedicacionService.deleteMedicacion(medicacionId);
+    return this.medicacionService.deleteMedicacion(medicacionId);
   }
 }

@@ -1,31 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Protectoras } from '../protectoras/protectoras.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Protectora } from '../protectora/protectora.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('donaciones_viveres')
 export class DonacionesViveres {
-
-    @ApiProperty({ example: 1, description: 'ID de donaciones viveres' })
+    @ApiProperty({ example: 1, description: 'ID de la donación' })
     @PrimaryGeneratedColumn()
-    id: number;
+    id_donacion: number;
 
-    @ApiProperty({ example: '2025-11-05', description: 'Fecha de donacion de viveres' })
+    @ApiProperty({ example: '2025-06-01', description: 'Fecha de la donación' })
     @Column({ type: 'date' }) 
     fecha: Date;  
   
-    @ApiProperty({ example: 'Comida', description: 'Tipo de donacion de viveres' })
-    @Column({ length: 100 })
+    @ApiProperty({ example: 'Alimento', description: 'Tipo de víveres donados' })
+    @Column()
     tipo: string;
 
-    @ApiProperty({ example: 1, description: 'Cantidad de donacion de viveres' })
+    @ApiProperty({ example: 50, description: 'Cantidad de víveres donados' })
     @Column()
     cantidad: number;
 
-    @ApiProperty({ example: 'Calle Costera', description: 'Direccion del lugar donde se ha donado los viveres' })
-    @Column({ length: 100 })
+    @ApiProperty({ example: 'Calle Mayor 123', description: 'Lugar de la donación' })
+    @Column()
     lugar: string;
 
-    @ApiProperty({ type: () => [Protectoras], description: 'Relaciones con protectora' })
-    @ManyToOne (() => Protectoras, protectora => protectora.id)
-        protectora: Protectoras;
+    @ApiProperty({ type: () => Protectora, description: 'Protectora asociada a la donación' })
+    @ManyToOne(() => Protectora, (protectora) => protectora.id_protectora, { eager: true })
+    @JoinColumn({ name: 'protectora' })
+    protectora: Protectora;
 }

@@ -1,37 +1,37 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
-import { Animales } from 'src/animales/animales.entity';
-import { DateDataType } from 'sequelize';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Animal } from 'src/animal/animal.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('medicacion')
-
+@Entity('medicaciones')
 export class Medicacion {
-  @ApiProperty({ example: 1, description: 'ID de medicacion' })
+  @ApiProperty({ example: 1, description: 'ID único de la medicación' })
   @PrimaryGeneratedColumn()
-  id: number;
+  id_medicacion: number;
 
-  @ApiProperty({ example: '2025-11-01', description: 'Fecha de inicio del tratamiento ' })
+  @ApiProperty({ example: '2025-11-01', description: 'Fecha de inicio del tratamiento médico del animal' })
   @Column({ type: 'date' })
   f_inicio: Date;
 
-  @ApiProperty({ example: '2025-11-30', description: 'Fecha de fin del tratamiento' })
+  @ApiProperty({ example: '2025-11-30', description: 'Fecha de finalización del tratamiento médico' })
   @Column({ type: 'date' })
   f_fin: Date;
 
-  @ApiProperty({ example: 'Paracetamol', description: 'Nombre de la medicacion' })
-  @Column()
+  @ApiProperty({ example: 'Paracetamol', description: 'Nombre del medicamento administrado' })
+  @Column({ length: 100 })
   nombre: string;
 
-  @ApiProperty({ example: '1mg', description: 'Dosis que hay que dar este medicamento' })
-  @Column()
+  @ApiProperty({ example: '1mg cada 8 horas', description: 'Dosis y frecuencia de administración del medicamento' })
+  @Column({ length: 50 })
   dosis: string;
 
-  @ApiProperty({ example: 'receta.png', description: 'Foto de la receta de la medicacion' })
-  @Column()
+  @ApiProperty({ example: 'receta.png', description: 'Ruta o nombre del archivo de la receta médica (opcional)' })
+  @Column({ nullable: true })
   foto_receta: string;
 
-  @ApiProperty({ type: () => [Animales], description: 'Relaciones con animales' })
-  @ManyToOne(() => Animales, (animales) => animales.id)
-  animales: Animales
-
+  @ApiProperty({
+    type: () => [Animal],
+    description: 'Lista de animales que están recibiendo esta medicación',
+  })
+  @ManyToMany(() => Animal, (animal) => animal.medicaciones)
+  animales: Animal[];
 }

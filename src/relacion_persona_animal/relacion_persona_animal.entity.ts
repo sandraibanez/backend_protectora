@@ -1,38 +1,54 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from 'src/users/users.entity';
-import { Animales } from 'src/animales/animales.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/user/user.entity';
+import { Animal } from 'src/animal/animal.entity';
 
 export enum TipoRelacion {
   ADOPTA = 'adopta',
   ACOGE = 'acoge',
-  APADRINA = 'apadrina'
+  APADRINA = 'apadrina',
 }
-@Entity('Relacion_Persona_Animal')
-export class Relacion_Persona_Animal {
-  @ApiProperty({ example: 1, description: 'ID de relacion persona animal' })
-  @PrimaryGeneratedColumn()
-  id: number;
 
-  @ApiProperty({ example: '2025-11-01', description: 'Fecha de la relacion persona animal' })
+@Entity('relacion_persona_animal')
+export class RelacionPersonaAnimal {
+  @ApiProperty({
+    example: 1,
+    description: 'ID único de la relación persona-animal',
+  })
+  @PrimaryGeneratedColumn()
+  id_relacion: number;
+
+  @ApiProperty({
+    example: '2025-04-15',
+    description: 'Fecha en la que se establece la relación entre la persona y el animal',
+  })
   @Column({ type: 'date' })
   fecha: Date;
 
-  @ApiProperty({ example: 'acoje', description: 'Tipo de relacion' })
+  @ApiProperty({
+    enum: TipoRelacion,
+    example: TipoRelacion.ADOPTA,
+    description: 'Tipo de relación entre la persona y el animal',
+  })
   @Column({
     type: 'enum',
     enum: TipoRelacion,
   })
   accion: TipoRelacion;
 
-  @ApiProperty({ type: () => [User], description: 'Relaciones con usuarios' })
-  @ManyToOne(() => User, persona => persona.id)
+  @ApiProperty({
+    type: () => User,
+    description: 'Persona (usuario) asociada a esta relación',
+  })
+  @ManyToOne(() => User, (persona) => persona.id_user)
+  @JoinColumn()
   persona: User;
 
-  @ApiProperty({ type: () => [Animales], description: 'Relaciones con animales' })
-  @ManyToOne(() => Animales, animal => animal.id)
-  animal: Animales;
-  
-
-  
+  @ApiProperty({
+    type: () => Animal,
+    description: 'Animal asociado a esta relación',
+  })
+  @ManyToOne(() => Animal, (animal) => animal.id_animal)
+  @JoinColumn()
+  animal: Animal;
 }

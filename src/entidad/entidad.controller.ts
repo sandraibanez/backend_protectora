@@ -1,10 +1,9 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { EntidadService } from './entidad.service';
-import { CreateEntidadDto, UpdateEntidad } from './entidad.dto';
+import { CreateEntidadDto, UpdateEntidadDto } from './entidad.dto';
 
-@Controller('entidad')
+@Controller('entidades')
 export class EntidadController {
-  EntidadService: any;
   constructor(private readonly entidadService: EntidadService) {}
   
   @Get()
@@ -26,7 +25,7 @@ export class EntidadController {
   }
 
   @Put(':id')
-  updateEntidad(@Param('id') id: string, @Body() updateEntidad: UpdateEntidad) {
+  updateEntidad(@Param('id') id: string, @Body() updateEntidad: UpdateEntidadDto) {
     const EntidadId = parseInt(id);
     if (isNaN(EntidadId)) {
       throw new HttpException('Invalid entidad ID', HttpStatus.BAD_REQUEST);

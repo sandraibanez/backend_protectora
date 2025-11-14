@@ -1,74 +1,67 @@
-import { IsString, IsDateString, IsBoolean, IsOptional, IsNumber, IsArray, IsInt, Length, Min, Max, IsIn } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsDateString, IsOptional, IsInt } from 'class-validator';
 
 export class CreateColoniaDto {
+  @ApiProperty({ example: 'Calle 789', description: 'Ubicación de la colonia de gatos' })
+  @IsString()
+  localizacion: string;
 
-    @ApiProperty({ example: 'Calle 789' })
-    @IsString()
-    localizacion: string;
+  @ApiProperty({ example: 1, description: 'Número de gatos en la colonia' })
+  @IsInt()
+  conteo_gatos: number;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    conteo_gatos: number;
+  @ApiProperty({ example: 'gato.png', description: 'Foto representativa de la colonia', required: false })
+  @IsOptional()
+  @IsString()
+  foto?: string;
 
-    @ApiProperty({ example: 'gato.png' })
-    @IsString()
-    foto: string;
+  @ApiProperty({ example: '2025-05-16', description: 'Horario en que se alimenta la colonia' })
+  @IsDateString()
+  horario_alimento: Date;
 
-    @ApiProperty({ example: '2025-05-16' })
-    @IsDateString()
-    horario_alimento: Date;
+  @ApiProperty({ example: 1, description: 'Cantidad de comida proporcionada' })
+  @IsInt()
+  cantidad_comida: number;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    cantidad_comida: number;
-
-    @ApiProperty({ example: 1 })
-    @IsOptional()
-    @IsArray()
-    @IsNumber({}, { each: true })
-    protectoraId?: number[];
+  @ApiProperty({ example: 1, description: 'ID de la protectora asociada', required: false })
+  @IsOptional()
+  @IsInt()
+  protectora?: number;
 }
-export class UpdateColonia{
 
-    @ApiProperty({ example: 1 })
-    @IsOptional()
-    @IsInt()
-    id?: number;
+export class UpdateColoniaDto {
+  @ApiProperty({ example: 1, description: 'ID de la colonia', required: false })
+  @IsOptional()
+  @IsInt()
+  id_colonia?: number;
 
-    @ApiProperty({ example: 'Calle 456' })
-    @IsString()
-    @IsOptional()
-    @Length(1, 50)
-    localizacion?: string;
+  @ApiProperty({ example: 'Calle 789', description: 'Ubicación de la colonia de gatos', required: false })
+  @IsOptional()
+  @IsString()
+  localizacion?: string;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    @IsOptional()
-    @Length(1, 50)
-    conteo_gatos?: number;
+  @ApiProperty({ example: 1, description: 'Número de gatos en la colonia', required: false })
+  @IsOptional()
+  @IsInt()
+  conteo_gatos?: number;
 
-    @ApiProperty({ example: 'gato.png' })
-    @IsString()
-    @IsOptional()
-    @Length(1, 50)
-    foto?: string;
+  @ApiProperty({ example: 'gato.png', description: 'Foto representativa de la colonia', required: false })
+  @IsOptional()
+  @IsString()
+  foto?: string;
 
-    @ApiProperty({ example: '2025-05-16' })
-    @IsOptional()
-    @IsDateString()
-    horario_alimento?: Date;
+  @ApiProperty({ example: '2025-05-16', description: 'Horario en que se alimenta la colonia', required: false })
+  @IsOptional()
+  @IsDateString()
+  horario_alimento?: Date;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    @IsOptional()
-    @IsDateString()
-    cantidad_comida?: number;
+  @ApiProperty({ example: 1, description: 'Cantidad de comida proporcionada', required: false })
+  @IsOptional()
+  @IsInt()
+  cantidad_comida?: number;
 
-    @ApiProperty({ example: 1 })
-    @IsInt()
-    @IsOptional()
-    @Min(0)
-    @Max(1)
-    protectoraId?: number;
+  @ApiProperty({ example: 1, description: 'ID de la protectora asociada', required: false })
+  @IsOptional()
+  @IsInt()
+  protectora?: number;
 }

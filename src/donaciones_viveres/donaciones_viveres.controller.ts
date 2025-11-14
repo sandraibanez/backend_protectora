@@ -1,47 +1,47 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { DonacionesViveresService } from './donaciones_viveres.service';
-import { CreateDonaciones_ViveresDto, UpdateDonaciones_Viveres } from './donaciones_viveres.dto';
+import { CreateDonacionesViveresDto, UpdateDonacionesViveresDto } from './donaciones_viveres.dto';
 
 @Controller('donaciones-viveres')
 export class DonacionesViveresController {
-  constructor(private readonly DonacionesViveresService: DonacionesViveresService) {}
+  constructor(private readonly donacionesViveresService: DonacionesViveresService) {}
 
   @Get()
   findAll() {
-    return this.DonacionesViveresService.findAll();
+    return this.donacionesViveresService.findAll();
   }
 
   @Get(':id')
-  getDonaciones_Viveres(@Param('id') id: string) {
-    const DonacionesViveresId = parseInt(id);
-    if (isNaN(DonacionesViveresId)) {
+  getDonacionesViveres(@Param('id') id: string) {
+    const donacionesViveresId = parseInt(id);
+    if (isNaN(donacionesViveresId)) {
       throw new HttpException('Invalid Donaciones Viveres ID', HttpStatus.BAD_REQUEST);
     }
-    return this.DonacionesViveresService.getDonaciones_Viveres(DonacionesViveresId);
+    return this.donacionesViveresService.getDonacionesViveres(donacionesViveresId);
   }
   @Post()
-  createDonaciones_Viveres(@Body() createDonacionViveresDto: CreateDonaciones_ViveresDto) {
-    return this.DonacionesViveresService.createDonaciones_Viveres(createDonacionViveresDto);
+  createDonacionesViveres(@Body() createDonacionViveresDto: CreateDonacionesViveresDto) {
+    return this.donacionesViveresService.createDonacionesViveres(createDonacionViveresDto);
   }
 
   @Put(':id')
-  updateDonaciones_Viveres(@Param('id') id: string, @Body() updateDonaciones_Viveres: UpdateDonaciones_Viveres) {
-    const DonacionesViveresId = parseInt(id);
-    if (isNaN(DonacionesViveresId)) {
+  updateDonacionesViveres(@Param('id') id: string, @Body() updateDonaciones_Viveres: UpdateDonacionesViveresDto) {
+    const donacionesViveresId = parseInt(id);
+    if (isNaN(donacionesViveresId)) {
       throw new HttpException('Invalid Donaciones Viveres ID', HttpStatus.BAD_REQUEST);
     }
-    return this.DonacionesViveresService.updateDonaciones_Viveres({
+    return this.donacionesViveresService.updateDonacionesViveres({
       ...updateDonaciones_Viveres,
-      id: DonacionesViveresId,
+      id_donacion: donacionesViveresId,
     });
   }
   
   @Delete(':id')
-  deleteDonaciones_Viveres(@Param('id') id: string) {
-    const DonacionesViveresId = parseInt(id);
-    if (isNaN(DonacionesViveresId)) {
+  deleteDonacionesViveres(@Param('id') id: string) {
+    const donacionesViveresId = parseInt(id);
+    if (isNaN(donacionesViveresId)) {
       throw new HttpException('Invalid Donaciones Viveres ID', HttpStatus.BAD_REQUEST);
     }
-    return this.DonacionesViveresService.deleteDonaciones_Viveres(DonacionesViveresId);
+    return this.donacionesViveresService.deleteDonacionesViveres(donacionesViveresId);
   }
 }
