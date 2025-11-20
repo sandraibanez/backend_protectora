@@ -18,13 +18,13 @@ export class AnimalVeterinario {
     @Column()
     diagnostico: string;
 
-    // @ApiProperty({ type: () => Animal, description: 'Animal relacionado con el registro' })
-    @OneToOne(() => Animal, (animal) => animal.id_animal, { eager: true })
+    @ApiProperty({ type: () => Animal, description: 'Animal relacionado con el registro' })
+    @ManyToOne(() => Animal, (animal) => animal.animalVeterinarios, { eager: true })
     @JoinColumn({ name: 'animal' })
     animal: Animal;
 
     @ApiProperty({ type: () => Veterinario, description: 'Veterinario que atiende al animal' })
-    @ManyToOne(() => Veterinario, (veterinario) => veterinario.id_veterinario, { eager: true })
+    @ManyToOne(() => Veterinario, (veterinario) => veterinario.animalVeterinarios, { eager: true })
     @JoinColumn({ name: 'veterinario' })
     veterinario: Veterinario;
 }

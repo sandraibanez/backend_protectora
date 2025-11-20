@@ -8,7 +8,7 @@ export class CreateIngresoDto {
 
   @ApiProperty({ example: '2025-06-10', description: 'Fecha en la que se recibió el ingreso' })
   @IsDateString()
-  fecha: string;
+  fecha: Date;
 
   @ApiProperty({ example: 500, description: 'Cantidad económica del ingreso en euros' })
   @IsInt()
@@ -40,7 +40,7 @@ export class UpdateIngresoDto {
   @ApiProperty({ example: '2025-06-15', description: 'Nueva fecha del ingreso'})
   @IsOptional()
   @IsDateString()
-  fecha?: string;
+  fecha?: Date;
 
   @ApiProperty({ example: 1, description: 'ID de la protectora asociada' })
   @IsOptional()

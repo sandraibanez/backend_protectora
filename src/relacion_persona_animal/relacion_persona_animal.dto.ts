@@ -8,7 +8,7 @@ export class CreateRelacionPersonaAnimalDto {
     description: 'Fecha en la que se establece la relación entre la persona y el animal',
   })
   @IsDateString()
-  fecha: string;
+  fecha: Date;
 
   @ApiProperty({
     enum: TipoRelacion,
@@ -48,7 +48,7 @@ export class UpdateRelacionPersonaAnimalDto {
   })
   @IsOptional()
   @IsDateString()
-  fecha?: string;
+  fecha?: Date;
 
   @ApiPropertyOptional({
     enum: TipoRelacion,

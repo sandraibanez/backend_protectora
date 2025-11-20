@@ -33,51 +33,96 @@ export class GastoService {
   }
 
   async createGasto(createGastoDto: CreateGastoDto): Promise<Gasto> {
-    const { protectora, ...rest } = createGastoDto;
+
+    if (typeof createGastoDto.tipo !== 'string') {
+        throw new HttpException('El tipo de gasto debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (typeof createGastoDto.cantidad !== 'number') {
+        throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
+    }
+    
+    if (typeof createGastoDto.fecha !== 'string' && !(createGastoDto.fecha instanceof Date)) {
+        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
+    }else if (typeof createGastoDto.fecha === 'string') {
+            if (isNaN(Date.parse(createGastoDto.fecha))) {
+                throw new HttpException(
+                    'La fecha debe tener formato válido YYYY-MM-DD',
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+        }
+    
+    if (typeof createGastoDto.protectora !== 'number') {
+        throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
+    }
 
     // Verificar que la protectora existe
-    const protectoraEntity = await this.protectoraRepository.findOneBy({
-      id_protectora: protectora,
-    });
-    if (!protectoraEntity) {
-      throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
+    const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createGastoDto.protectora });
+    if (!protectora) {
+        throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
     }
 
     const gasto = this.gastoRepository.create({
-      ...rest,
-      protectora: protectoraEntity,
+      ...createGastoDto,
+      protectora,
     });
 
     return this.gastoRepository.save(gasto);
   }
 
   async updateGasto(updateGastoDto: UpdateGastoDto): Promise<Gasto> {
-        const gasto = await this.gastoRepository.findOne({
-            where: { id_gasto: updateGastoDto.id_gasto },
-            relations: ['protectora'],
-        });
+    const gasto = await this.gastoRepository.findOne({
+        where: { id_gasto: updateGastoDto.id_gasto },
+        relations: ['protectora'],
+    });
 
-        if (!gasto) {
-            throw new HttpException('Gasto no encontrado', HttpStatus.NOT_FOUND);
-        }
-
-    // Actualizar protectora si se proporciona
-        if (updateGastoDto.protectora !== undefined) {
-            const protectora = await this.protectoraRepository.findOneBy({ id_protectora: updateGastoDto.protectora });
-            if (!protectora) {
-                throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
-            }
-            gasto.protectora = protectora;
-        }
-        const camposSimples = {
-            fecha: updateGastoDto.fecha,
-            tipo: updateGastoDto.tipo,
-            cantidad: updateGastoDto.cantidad
-        };
-        
-        this.gastoRepository.merge(gasto, camposSimples);
-        return this.gastoRepository.save(gasto);
+    if (!gasto) {
+        throw new HttpException('Gasto no encontrado', HttpStatus.NOT_FOUND);
     }
+
+    if (updateGastoDto.tipo !== undefined && typeof updateGastoDto.tipo !== 'string') {
+        throw new HttpException('El tipo de gasto debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (updateGastoDto.cantidad !== undefined && typeof updateGastoDto.cantidad !== 'number') {
+        throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
+    }
+
+    if (updateGastoDto.fecha !== undefined &&
+        typeof updateGastoDto.fecha !== 'string' &&
+        !(updateGastoDto.fecha instanceof Date)) {
+        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
+    }else if (typeof updateGastoDto.fecha === 'string') {
+      if (isNaN(Date.parse(updateGastoDto.fecha))) {
+        throw new HttpException(
+          'La fecha debe tener formato válido YYYY-MM-DD',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+
+    if (updateGastoDto.protectora !== undefined && typeof updateGastoDto.protectora !== 'number') {
+        throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
+    }
+
+  // Actualizar protectora si se proporciona
+    if (updateGastoDto.protectora !== undefined) {
+        const protectora = await this.protectoraRepository.findOneBy({ id_protectora: updateGastoDto.protectora });
+        if (!protectora) {
+            throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
+        }
+        gasto.protectora = protectora;
+    }
+    const camposSimples = {
+        fecha: updateGastoDto.fecha,
+        tipo: updateGastoDto.tipo,
+        cantidad: updateGastoDto.cantidad
+    };
+    
+    this.gastoRepository.merge(gasto, camposSimples);
+    return this.gastoRepository.save(gasto);
+  }
     
   
 

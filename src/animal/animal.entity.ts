@@ -56,5 +56,8 @@ export class Animal {
   @ApiProperty({ type: () => Protectora, description: 'Protectora a la que pertenece el animal' })
   @ManyToOne(() => Protectora, (protectora) => protectora.id_protectora)
   protectora: Protectora;
+
+  @OneToMany(() => AnimalVeterinario, (animalVeterinario) => animalVeterinario.animal)
+  animalVeterinarios: AnimalVeterinario[];
     
 }

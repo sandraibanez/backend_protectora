@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Protectora } from 'src/protectora/protectora.entity';
+import { AnimalVeterinario } from 'src/animal_veterinario/animal_veterinario.entity';
 
 @Entity('veterinarios')
 export class Veterinario {
@@ -39,4 +40,7 @@ export class Veterinario {
   @JoinTable()
   @ManyToMany(() => Protectora, (protectora) => protectora.veterinarios)
   protectoras: Protectora[];
+
+  @OneToMany(() => AnimalVeterinario, (animalVeterinario) => animalVeterinario.veterinario)
+  animalVeterinarios: AnimalVeterinario[]
 }

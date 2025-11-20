@@ -38,6 +38,18 @@ export class VeterinarioService {
   // Crear veterinario
   async createVeterinario(createVeterinarioDto: CreateVeterinarioDto): Promise<Veterinario> {
 
+    if (typeof createVeterinarioDto.nombre !== 'string') {
+        throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (typeof createVeterinarioDto.direccion !== 'string') {
+        throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (typeof createVeterinarioDto.telefono !== 'number') {
+        throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
+    }
+
     let protectoras: Protectora[] = [];
     if (createVeterinarioDto.protectoras && createVeterinarioDto.protectoras.length > 0) {
         protectoras = await this.protectoraRepository.findBy({ id_protectora: In(createVeterinarioDto.protectoras) });
@@ -55,37 +67,49 @@ export class VeterinarioService {
   }
   
   async updateVeterinario(updateVeterinarioDto: UpdateVeterinarioDto): Promise<Veterinario> {
-      const veterinario = await this.veterinarioRepository.findOne({
-          where: { id_veterinario: updateVeterinarioDto.id_veterinario },
-          relations: ['protectoras'],
+    const veterinario = await this.veterinarioRepository.findOne({
+      where: { id_veterinario: updateVeterinarioDto.id_veterinario },
+      relations: ['protectoras'],
+    });
+
+    if (!veterinario) {
+      throw new HttpException('Veterinario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    if (updateVeterinarioDto.nombre !== undefined && typeof updateVeterinarioDto.nombre !== 'string') {
+      throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (updateVeterinarioDto.direccion !== undefined && typeof updateVeterinarioDto.direccion !== 'string') {
+      throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (updateVeterinarioDto.telefono !== undefined && typeof updateVeterinarioDto.telefono !== 'number') {
+      throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
+    }
+
+    // Actualizar relaciones de protectoras
+    if (updateVeterinarioDto.protectoras) {
+      const protectoras = await this.protectoraRepository.findBy({
+        id_protectora: In(updateVeterinarioDto.protectoras),
       });
 
-      if (!veterinario) {
-          throw new HttpException('Veterinario no encontrado', HttpStatus.NOT_FOUND);
+      if (protectoras.length !== updateVeterinarioDto.protectoras.length) {
+        throw new HttpException('Alguna protectora no existe', HttpStatus.BAD_REQUEST);
       }
 
-      // Actualizar relaciones de protectoras
-      if (updateVeterinarioDto.protectoras) {
-          const protectoras = await this.protectoraRepository.findBy({
-              id_protectora: In(updateVeterinarioDto.protectoras),
-          });
+      veterinario.protectoras = protectoras;
+    }
 
-          if (protectoras.length !== updateVeterinarioDto.protectoras.length) {
-              throw new HttpException('Alguna protectora no existe', HttpStatus.BAD_REQUEST);
-          }
+    // Actualizar campos simples
+    const camposSimples = {
+        nombre: updateVeterinarioDto.nombre,
+        direccion: updateVeterinarioDto.direccion,
+        telefono: updateVeterinarioDto.telefono,
+    };
+    this.veterinarioRepository.merge(veterinario, camposSimples);
 
-          veterinario.protectoras = protectoras;
-      }
-
-      // Actualizar campos simples
-      const camposSimples = {
-          nombre: updateVeterinarioDto.nombre,
-          direccion: updateVeterinarioDto.direccion,
-          telefono: updateVeterinarioDto.telefono,
-      };
-      this.veterinarioRepository.merge(veterinario, camposSimples);
-
-      return this.veterinarioRepository.save(veterinario);
+    return this.veterinarioRepository.save(veterinario);
   }
 
   // Eliminar veterinario
