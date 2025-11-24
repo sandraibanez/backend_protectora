@@ -36,12 +36,12 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
   imports: [
     TypeOrmModule.forRoot({
       type: 'mariadb',
-      host: 'localhost',
-      port: 2222,
-      // port: parseInt(process.env.WEB_SERVER_PORT ?? '3306' ),
-      username: "root",
-      password: "1234",
-      database: "backend",
+      host: 'database',
+      // port: 2222,
+      port: parseInt(process.env.DB_PORT ?? '3306'),
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
       entities: [
         User,
         Animal,
