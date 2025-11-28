@@ -14,7 +14,7 @@ export class CreateGastoDto {
     description: 'Fecha en la que se realizó el gasto',
   })
   @IsDateString()
-  fecha: string;
+  fecha: Date;
 
   @ApiProperty({
     example: 150,
@@ -64,7 +64,7 @@ export class UpdateGastoDto {
   })
   @IsOptional()
   @IsDateString()
-  fecha?: string;
+  fecha?: Date;
 
   @ApiProperty({
     example: 3,

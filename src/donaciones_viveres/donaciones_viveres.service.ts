@@ -35,6 +35,33 @@ export class DonacionesViveresService {
 
     async createDonacionesViveres(createDonacionesViveresDto: CreateDonacionesViveresDto): Promise<DonacionesViveres> {
 
+        if (typeof createDonacionesViveresDto.tipo !== 'string') {
+            throw new HttpException('El tipo de víveres debe ser texto', HttpStatus.BAD_REQUEST);
+        }
+
+        if (typeof createDonacionesViveresDto.cantidad !== 'number') {
+            throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
+        }
+        
+        if (typeof createDonacionesViveresDto.lugar !== 'string') {
+            throw new HttpException('El lugar debe ser texto', HttpStatus.BAD_REQUEST);
+        }
+        
+        if (typeof createDonacionesViveresDto.fecha !== 'string' && !(createDonacionesViveresDto.fecha instanceof Date)) {
+            throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
+        }else if (typeof createDonacionesViveresDto.fecha === 'string') {
+            if (isNaN(Date.parse(createDonacionesViveresDto.fecha))) {
+                throw new HttpException(
+                    'La fecha debe tener formato válido YYYY-MM-DD',
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+        }
+        
+        if (typeof createDonacionesViveresDto.protectora !== 'number') {
+            throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
+        }
+
         // Validar protectora
         const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createDonacionesViveresDto.protectora });
         if (!protectora) {
@@ -57,6 +84,35 @@ export class DonacionesViveresService {
 
         if (!donacion) {
             throw new HttpException('Donación no encontrada', HttpStatus.NOT_FOUND);
+        }
+
+        if (updateDonacionesViveresDto.tipo !== undefined && typeof updateDonacionesViveresDto.tipo !== 'string') {
+            throw new HttpException('El tipo de víveres debe ser texto', HttpStatus.BAD_REQUEST);
+        }
+
+        if (updateDonacionesViveresDto.cantidad !== undefined && typeof updateDonacionesViveresDto.cantidad !== 'number') {
+            throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
+        }
+        
+        if (updateDonacionesViveresDto.lugar !== undefined && typeof updateDonacionesViveresDto.lugar !== 'string') {
+            throw new HttpException('El lugar debe ser texto', HttpStatus.BAD_REQUEST);
+        }
+        
+        if (updateDonacionesViveresDto.fecha !== undefined &&
+            typeof updateDonacionesViveresDto.fecha !== 'string' &&
+            !(updateDonacionesViveresDto.fecha instanceof Date)) {
+            throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
+        }else if (typeof updateDonacionesViveresDto.fecha === 'string') {
+            if (isNaN(Date.parse(updateDonacionesViveresDto.fecha))) {
+                throw new HttpException(
+                    'La fecha debe tener formato válido YYYY-MM-DD',
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+        }
+        
+        if (updateDonacionesViveresDto.protectora !== undefined && typeof updateDonacionesViveresDto.protectora !== 'number') {
+            throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
         }
 
         // Actualizar protectora si se proporciona

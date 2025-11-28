@@ -33,21 +33,40 @@ export class IngresoService {
   }
 
   async createIngreso(createIngresoDto: CreateIngresoDto): Promise<Ingreso> {
-    const { protectora, ...rest } = createIngresoDto;
+
+    if (typeof createIngresoDto.tipo !== 'string') {
+        throw new HttpException('El tipo de ingreso debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (typeof createIngresoDto.cantidad !== 'number') {
+        throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
+    }
+    
+    if (typeof createIngresoDto.fecha !== 'string' && !(createIngresoDto.fecha instanceof Date)) {
+        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
+    }else if (typeof createIngresoDto.fecha === 'string') {
+      if (isNaN(Date.parse(createIngresoDto.fecha))) {
+        throw new HttpException(
+          'La fecha debe tener formato válido YYYY-MM-DD',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+    
+    if (typeof createIngresoDto.protectora !== 'number') {
+        throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
+    }
 
     // Verificar que la protectora existe
-    const protectoraEntity = await this.protectoraRepository.findOneBy({
-      id_protectora: protectora,
-    });
-    if (!protectoraEntity) {
-      throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
+    const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createIngresoDto.protectora });
+    if (!protectora) {
+        throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
     }
 
     const ingreso = this.ingresoRepository.create({
-      ...rest,
-      protectora: protectoraEntity,
+      ...createIngresoDto,
+      protectora,
     });
-
     return this.ingresoRepository.save(ingreso);
   }
 
@@ -59,6 +78,31 @@ export class IngresoService {
 
     if (!ingreso) {
       throw new HttpException('Ingreso no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    if (updateIngresoDto.tipo !== undefined && typeof updateIngresoDto.tipo !== 'string') {
+        throw new HttpException('El tipo de ingreso debe ser texto', HttpStatus.BAD_REQUEST);
+    }
+
+    if (updateIngresoDto.cantidad !== undefined && typeof updateIngresoDto.cantidad !== 'number') {
+        throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
+    }
+    
+    if (updateIngresoDto.fecha !== undefined &&
+        typeof updateIngresoDto.fecha !== 'string' &&
+        !(updateIngresoDto.fecha instanceof Date)) {
+        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
+    }else if (typeof updateIngresoDto.fecha === 'string') {
+      if (isNaN(Date.parse(updateIngresoDto.fecha))) {
+        throw new HttpException(
+          'La fecha debe tener formato válido YYYY-MM-DD',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+    
+    if (updateIngresoDto.protectora !== undefined && typeof updateIngresoDto.protectora !== 'number') {
+        throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
     }
 
     // Actualizar protectora si se proporciona
