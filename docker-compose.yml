@@ -9,16 +9,22 @@ services:
     working_dir: /web
     command: pm2-runtime start pm2.json
     volumes:
-      - ./backend:/web
+    - .:/web
     environment:
-      - TZ=Europe/Berlin
-    restart: always
+    - TZ=Europe/Berlin
+    - WEB_SERVER_PORT=${WEB_SERVER_PORT}
+    - DB_PORT=${DB_PORT}
+    - MYSQL_DATABASE=${MYSQL_DATABASE}
+    - MYSQL_USER=${MYSQL_USER}
+    - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    restart: unless-stopped
   database:
     image: yobasystems/alpine-mariadb:11.4.5
     container_name:  backend
     ports:
       - "2222:3306"
-    restart: always
+    restart: unless-stopped
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}

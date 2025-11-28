@@ -5,6 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export enum RolUsuario {
   CLIENTE = 'cliente',
   ADMIN = 'admin',
+  VETERINARIO = 'veterinario',
 }
 
 @Entity('Users')

@@ -59,15 +59,15 @@ import { AnimalVeterinario } from './animal_veterinario/animal_veterinario.entit
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mariadb',
-      host: 'localhost',
-      port: 2222,
-      // port: parseInt(process.env.WEB_SERVER_PORT ?? '3306' ),
-      username: "root",
-      password: "1234",
-      database: "backend",
+       type: 'mariadb',
+      host: 'database',
+      // port: 2222,
+      port: parseInt(process.env.DB_PORT ?? '3306'),
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
       entities: [User, Animal, Entidad, Medicacion, Veterinario, Ingreso, Gasto, Protectora, Colonia, DonacionesViveres, RelacionPersonaAnimal, Animal_Entidad, AnimalVeterinario],
-      synchronize: true,
+      synchronize: false,
     }),
     UserModule,
     EntidadModule,

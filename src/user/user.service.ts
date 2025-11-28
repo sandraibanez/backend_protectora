@@ -1,15 +1,34 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { JwtService } from '@nestjs/jwt';
 
-@Injectable()
+@
+  Injectable()
 export class UserService {
+
   constructor(
+    // private usersService: UserService,
+    private jwtService: JwtService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
+
+  async signIn(
+    nombre: string,
+    pass: string,
+  ): Promise<{ access_token: string }> {
+    const user = await this.getUser(nombre);
+    if (user?.contrasenya !== pass) {
+      throw new UnauthorizedException();
+    }
+    const payload = { sub: user.id_user, nombre: user.nombre };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
 
   // Obtener todos los usuarios
   findAll(): Promise<User[]> {
@@ -17,9 +36,9 @@ export class UserService {
   }
 
   // Obtener un usuario por ID
-  async getUser(id_user: number): Promise<User> {
+  async getUser(nombre: string): Promise<User> {
     const user = await this.userRepository.findOne({
-      where: { id_user },
+      where: { nombre },
     });
 
     if (!user) {
@@ -45,7 +64,7 @@ export class UserService {
 
   // Actualizar un usuario existente
   async updateUser(updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOneBy({id_user: updateUserDto.id_user});
+    const user = await this.userRepository.findOneBy({ id_user: updateUserDto.id_user });
 
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
@@ -67,7 +86,7 @@ export class UserService {
 
   // Eliminar un usuario con comprobación
   async deleteUser(id_user: number): Promise<void> {
-    const user = await this.userRepository.findOneBy({id_user});
+    const user = await this.userRepository.findOneBy({ id_user });
 
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
