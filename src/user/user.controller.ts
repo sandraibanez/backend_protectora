@@ -18,7 +18,11 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    return {
+      id_user: req.user.id_user,
+      nombre: req.user.nombre,
+      rol: req.user.rol,
+    }
   }
 
   @Get()
@@ -29,9 +33,6 @@ export class UserController {
   @Get(':username')
   getUser(@Param('username') username: string) {
     const usernames = username;
-    // if (usernames) {
-    //   throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
-    // }
     return this.userService.getUser(usernames);
   }
 
@@ -52,14 +53,24 @@ export class UserController {
     });
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id_user')
-  deleteUser(@Param('id_user') id_user: string) {
-    const userId = parseInt(id_user);
-    if (isNaN(userId)) {
-      throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+  deleteUser(@Param('id_user') id_user: string, @Request() req) {
+    let userCurrent = req.user.rol;
+    console.log(userCurrent);
+    console.log(req.user);
+    if (userCurrent == "admin") {
+      console.log("admin");
+      const userId = parseInt(id_user);
+      if (isNaN(userId)) {
+        throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+      }
+      return this.userService.deleteUser(userId);
+    } else {
+      console.log(req.user);
+      throw new HttpException('No tienes permisos para eliminar usuarios', HttpStatus.FORBIDDEN);
     }
-    return this.userService.deleteUser(userId);
+
+
   }
 }
-
-

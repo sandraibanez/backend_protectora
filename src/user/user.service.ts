@@ -24,9 +24,9 @@ export class UserService {
     if (user?.contrasenya !== pass) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id_user, nombre: user.nombre };
+    const payload = {rol: user.rol };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(user),
     };
   }
 
