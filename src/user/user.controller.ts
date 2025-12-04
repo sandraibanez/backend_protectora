@@ -32,7 +32,7 @@ export class UserController {
     if (userCurrent == "admin") {
       return this.userService.findAll();
     } else {
-      throw new HttpException('No tienes permisos para eliminar usuarios', HttpStatus.FORBIDDEN);
+      throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
     }
   }
 
@@ -45,7 +45,7 @@ export class UserController {
       const idUser = id_user;
       return this.userService.getUser(idUser);
     } else {
-      throw new HttpException('No tienes permisos para eliminar usuarios', HttpStatus.FORBIDDEN);
+      throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
     }
   }
 
@@ -58,7 +58,7 @@ export class UserController {
       const idUser = id_user;
       return this.userService.getUserClient(idUser);
     } else {
-      throw new HttpException('No tienes permisos para eliminar usuarios', HttpStatus.FORBIDDEN);
+      throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
     }
   }
 
