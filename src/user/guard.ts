@@ -6,8 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
 import { Request } from 'express';
-
+//process.env.MYSQL_USER
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) { }
@@ -22,7 +23,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(
         token,
         {
-          secret: process.env.SECRET
+          secret: jwtConstants.secret
         }
       );
 
