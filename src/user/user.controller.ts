@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Request, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
-import { AuthGuard } from './guard';
+import { AuthGuard } from 'src/authentication/auth/guard';
 import { log } from 'console';
 
 @Controller('users')
@@ -10,30 +10,18 @@ export class UserController {
     private readonly userService: UserService,
   ) { }
 
-  // login para los usurios
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.userService.signIn(signInDto.email, signInDto.password);
-  }
 
-  // la informacion del usuario que esta logeado para el profile
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return this.userService.getUser(req.user.idUser);
-  }
 
   // para que el usuario admin pueda ver todos los uusarios de la aplicacion
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get()
   findAll(@Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent == "admin") {
+    // let userCurrent = req.user.rol;
+    // if (userCurrent == "admin") {
       return this.userService.findAll();
-    } else {
-      throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
-    }
+    // } else {
+    //   throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
+    // }
   }
 
   // para que un usuario admin pueda ver toda la informacion de un usuario en concreto

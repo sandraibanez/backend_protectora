@@ -31,7 +31,7 @@ import { DonacionesViveresModule } from './donaciones_viveres/donaciones_viveres
 import { RelacionPersonaAnimalModule } from './relacion_persona_animal/relacion_persona_animal.module';
 import { AnimalEntidadModule } from './animal_entidad/animal_entidad.module';
 import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario.module';
-
+import { AuthModule } from './authentication/auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -63,6 +63,7 @@ import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario
     RelacionPersonaAnimalModule,
     AnimalEntidadModule,
     AnimalVeterinarioModule,
+    AuthModule,
   ],
 
   controllers: [AppController],
