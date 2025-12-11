@@ -38,18 +38,6 @@ export class VeterinarioService {
   // Crear veterinario
   async createVeterinario(createVeterinarioDto: CreateVeterinarioDto): Promise<Veterinario> {
 
-    if (typeof createVeterinarioDto.nombre !== 'string') {
-        throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (typeof createVeterinarioDto.direccion !== 'string') {
-        throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (typeof createVeterinarioDto.telefono !== 'number') {
-        throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-
     let protectoras: Protectora[] = [];
     if (createVeterinarioDto.protectoras && createVeterinarioDto.protectoras.length > 0) {
         protectoras = await this.protectoraRepository.findBy({ id_protectora: In(createVeterinarioDto.protectoras) });
@@ -74,18 +62,6 @@ export class VeterinarioService {
 
     if (!veterinario) {
       throw new HttpException('Veterinario no encontrado', HttpStatus.NOT_FOUND);
-    }
-
-    if (updateVeterinarioDto.nombre !== undefined && typeof updateVeterinarioDto.nombre !== 'string') {
-      throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateVeterinarioDto.direccion !== undefined && typeof updateVeterinarioDto.direccion !== 'string') {
-      throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateVeterinarioDto.telefono !== undefined && typeof updateVeterinarioDto.telefono !== 'number') {
-      throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
     }
 
     // Actualizar relaciones de protectoras
