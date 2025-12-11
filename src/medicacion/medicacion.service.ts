@@ -39,44 +39,6 @@ export class MedicacionService {
     // Crear una nueva medicación
     async createMedicacion(createMedicacionDto: CreateMedicacionDto): Promise<Medicacion> {
 
-        if (typeof createMedicacionDto.nombre !== 'string') {
-            throw new HttpException('El nombre del medicamento debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (typeof createMedicacionDto.dosis !== 'string') {
-            throw new HttpException('La dosis debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (createMedicacionDto.foto_receta && typeof createMedicacionDto.foto_receta !== 'string') {
-            throw new HttpException('La foto de la receta debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (typeof createMedicacionDto.f_inicio !== 'string' && !(createMedicacionDto.f_inicio instanceof Date)) {
-            throw new HttpException('La fecha de inicio debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof createMedicacionDto.f_inicio === 'string') {
-            if (isNaN(Date.parse(createMedicacionDto.f_inicio))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (typeof createMedicacionDto.f_fin !== 'string' && !(createMedicacionDto.f_fin instanceof Date)) {
-            throw new HttpException('La fecha de fin debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof createMedicacionDto.f_fin === 'string') {
-            if (isNaN(Date.parse(createMedicacionDto.f_fin))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (createMedicacionDto.animales && !Array.isArray(createMedicacionDto.animales)) {
-            throw new HttpException('Los animales deben ser un array de IDs numéricos', HttpStatus.BAD_REQUEST);
-        }
-
         // Validar animales
         let animales: Animal[] = [];
         if (createMedicacionDto.animales && createMedicacionDto.animales.length > 0) {
@@ -109,49 +71,6 @@ export class MedicacionService {
 
         if (!medicacion) {
             throw new HttpException('Medicacion no encontrada', HttpStatus.NOT_FOUND);
-        }
-
-        if (updateMedicacionDto.nombre !== undefined && typeof updateMedicacionDto.nombre !== 'string') {
-            throw new HttpException('El nombre del medicamento debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (updateMedicacionDto.dosis !== undefined && typeof updateMedicacionDto.dosis !== 'string') {
-            throw new HttpException('La dosis debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateMedicacionDto.foto_receta !== undefined && typeof updateMedicacionDto.foto_receta !== 'string') {
-            throw new HttpException('La foto de la receta debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateMedicacionDto.f_inicio !== undefined &&
-            typeof updateMedicacionDto.f_inicio !== 'string' &&
-            !(updateMedicacionDto.f_inicio instanceof Date)) {
-            throw new HttpException('La fecha de inicio debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-
-        }else if (typeof updateMedicacionDto.f_inicio === 'string') {
-            if (isNaN(Date.parse(updateMedicacionDto.f_inicio))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-        
-        if (updateMedicacionDto.f_fin !== undefined &&
-            typeof updateMedicacionDto.f_fin !== 'string' &&
-            !(updateMedicacionDto.f_fin instanceof Date)) {
-            throw new HttpException('La fecha de fin debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof updateMedicacionDto.f_fin === 'string') {
-            if (isNaN(Date.parse(updateMedicacionDto.f_fin))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-        
-        if (updateMedicacionDto.animales !== undefined && !Array.isArray(updateMedicacionDto.animales)) {
-            throw new HttpException('Los animales deben ser un array de IDs numéricos', HttpStatus.BAD_REQUEST);
         }
 
         // Actualizar campos simples
