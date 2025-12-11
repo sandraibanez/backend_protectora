@@ -27,12 +27,7 @@ export class EntidadService {
     }
 
     async createEntidad(createEntidadDto: CreateEntidadDto): Promise<Entidad> {
-        if (typeof createEntidadDto.nombre !== 'string') {
-            throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        if (typeof createEntidadDto.tipo !== 'string') {
-            throw new HttpException('El tipo debe ser texto', HttpStatus.BAD_REQUEST);
-        }
+
         const entidad = this.entidadRepository.create(createEntidadDto);
         return this.entidadRepository.save(entidad);
     }
@@ -44,14 +39,6 @@ export class EntidadService {
 
         if (!entidad) {
             throw new HttpException('Entidad no encontrada', HttpStatus.NOT_FOUND);
-        }
-
-        if (updateEntidadDto.nombre !== undefined && typeof updateEntidadDto.nombre !== 'string') {
-            throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateEntidadDto.tipo !== undefined && typeof updateEntidadDto.tipo !== 'string') {
-            throw new HttpException('El tipo debe ser texto', HttpStatus.BAD_REQUEST);
         }
 
         // Actualiza solo los campos que vienen en el DTO
