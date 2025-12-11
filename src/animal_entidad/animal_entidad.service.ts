@@ -35,29 +35,6 @@ export class AnimalEntidadService {
     }
 
     async createAnimalEntidad(createAnimalEntidadDto: CreateAnimalEntidadDto): Promise<Animal_Entidad> {
-        
-        if (typeof createAnimalEntidadDto.ubicacion !== 'string') {
-            throw new HttpException('La ubicación debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (typeof createAnimalEntidadDto.fecha !== 'string' && !(createAnimalEntidadDto.fecha instanceof Date)) {
-            throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof createAnimalEntidadDto.fecha === 'string') {
-            if (isNaN(Date.parse(createAnimalEntidadDto.fecha))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (typeof createAnimalEntidadDto.animal !== 'number') {
-            throw new HttpException('El ID del animal debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (typeof createAnimalEntidadDto.entidad !== 'number') {
-            throw new HttpException('El ID de la entidad debe ser un número', HttpStatus.BAD_REQUEST);
-        }
 
         const animal = await this.animalRepository.findOneBy({ id_animal: createAnimalEntidadDto.animal });
         if (!animal) {
@@ -86,31 +63,6 @@ export class AnimalEntidadService {
         if (!animalEntidad) {
             throw new HttpException('Animal-Entidad no encontrada', HttpStatus.NOT_FOUND)
         };
-
-        if (updateAnimalEntidadDto.ubicacion !== undefined && typeof updateAnimalEntidadDto.ubicacion !== 'string') {
-            throw new HttpException('La ubicación debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (updateAnimalEntidadDto.fecha !== undefined &&
-            typeof updateAnimalEntidadDto.fecha !== 'string' &&
-            !(updateAnimalEntidadDto.fecha instanceof Date)) {
-            throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof updateAnimalEntidadDto.fecha === 'string') {
-            if (isNaN(Date.parse(updateAnimalEntidadDto.fecha))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (updateAnimalEntidadDto.animal !== undefined && typeof updateAnimalEntidadDto.animal !== 'number') {
-            throw new HttpException('El ID del animal debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateAnimalEntidadDto.entidad !== undefined && typeof updateAnimalEntidadDto.entidad !== 'number') {
-            throw new HttpException('El ID de la entidad debe ser un número', HttpStatus.BAD_REQUEST);
-        }
 
         if (updateAnimalEntidadDto.animal) {
             const animal = await this.animalRepository.findOneBy({ id_animal: updateAnimalEntidadDto.animal });

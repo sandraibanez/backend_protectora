@@ -3,11 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Animal } from './animal.entity';
 import { CreateAnimalDto, UpdateAnimalDto } from './animal.dto';
-import { AnimalVeterinario } from 'src/animal_veterinario/animal_veterinario.entity';
 import { Protectora } from 'src/protectora/protectora.entity';
 import { Medicacion } from 'src/medicacion/medicacion.entity';
-import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
-import { RelacionPersonaAnimal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
 
 @Injectable()
 export class AnimalService {
