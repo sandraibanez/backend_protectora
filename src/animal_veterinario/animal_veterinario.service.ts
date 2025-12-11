@@ -52,29 +52,6 @@ export class AnimalVeterinarioService {
     // Crear un nuevo registro
     async createAnimalVeterinario(createAnimalVeterinarioDto: CreateAnimalVeterinarioDto): Promise<AnimalVeterinario> {
         
-        if (typeof createAnimalVeterinarioDto.diagnostico !== 'string') {
-            throw new HttpException('El diagnóstico debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (typeof createAnimalVeterinarioDto.fecha !== 'string' && !(createAnimalVeterinarioDto.fecha instanceof Date)) {
-            throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof createAnimalVeterinarioDto.fecha === 'string') {
-            if (isNaN(Date.parse(createAnimalVeterinarioDto.fecha))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (typeof createAnimalVeterinarioDto.animal !== 'number') {
-            throw new HttpException('El ID del animal debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (typeof createAnimalVeterinarioDto.veterinario !== 'number') {
-            throw new HttpException('El ID del veterinario debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-
         const animal = await this.animalRepository.findOneBy({ id_animal: createAnimalVeterinarioDto.animal });
         if (!animal) {
             throw new HttpException('Animal no encontrado', HttpStatus.BAD_REQUEST);
@@ -102,31 +79,6 @@ export class AnimalVeterinarioService {
         });
         if (!animalVeterinario) {
             throw new HttpException('Animal-Veterinario no encontrado', HttpStatus.NOT_FOUND);
-        }
-
-        if (updateAnimalVeterinarioDto.diagnostico !== undefined && typeof updateAnimalVeterinarioDto.diagnostico !== 'string') {
-            throw new HttpException('El diagnóstico debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (updateAnimalVeterinarioDto.fecha !== undefined &&
-            typeof updateAnimalVeterinarioDto.fecha !== 'string' &&
-            !(updateAnimalVeterinarioDto.fecha instanceof Date)) {
-            throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof updateAnimalVeterinarioDto.fecha === 'string') {
-            if (isNaN(Date.parse(updateAnimalVeterinarioDto.fecha))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (updateAnimalVeterinarioDto.animal !== undefined && typeof updateAnimalVeterinarioDto.animal !== 'number') {
-            throw new HttpException('El ID del animal debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateAnimalVeterinarioDto.veterinario !== undefined && typeof updateAnimalVeterinarioDto.veterinario !== 'number') {
-            throw new HttpException('El ID del veterinario debe ser un número', HttpStatus.BAD_REQUEST);
         }
 
         if (updateAnimalVeterinarioDto.animal !== undefined) {
