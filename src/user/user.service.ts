@@ -5,10 +5,7 @@ import { RolUsuario, User } from './user.entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { JwtService } from '@nestjs/jwt';
 
-
-
-@
-  Injectable()
+@Injectable()
 export class UserService {
 
   constructor(
@@ -17,15 +14,10 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) { }
 
-
-
   // Obtener todos los usuarios
   findAll(): Promise<User[]> {
     return this.userRepository.find({});
   }
-
-
- 
 
   // Obtener un usuario por ID
   async getUser(id: number): Promise<User> {
@@ -51,27 +43,7 @@ export class UserService {
 
   // Crear un nuevo usuario
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    if (typeof createUserDto.nombre !== 'string') {
-      throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-    if (typeof createUserDto.contrasenya !== 'string') {
-      throw new HttpException('La contraseña debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-    if (typeof createUserDto.direccion !== 'string') {
-      throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-    if (typeof createUserDto.email !== 'string') {
-      throw new HttpException('El email debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-    if (typeof createUserDto.telefono !== 'number') {
-      throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-    if (typeof createUserDto.DNI !== 'string') {
-      throw new HttpException('El DNI debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-    if (!Object.values(RolUsuario).includes(createUserDto.rol)) {
-      throw new HttpException('El rol debe ser cliente o admin o veterinario', HttpStatus.BAD_REQUEST);
-    }
+
     // Verificar si el email ya está registrado
     const existeUser = await this.userRepository.findOne({
       where: { email: createUserDto.email },
@@ -90,34 +62,6 @@ export class UserService {
 
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
-    }
-
-    if (updateUserDto.nombre !== undefined && typeof updateUserDto.nombre !== 'string') {
-      throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateUserDto.contrasenya !== undefined && typeof updateUserDto.contrasenya !== 'string') {
-      throw new HttpException('La contraseña debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateUserDto.direccion !== undefined && typeof updateUserDto.direccion !== 'string') {
-      throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateUserDto.email !== undefined && typeof updateUserDto.email !== 'string') {
-      throw new HttpException('El email debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateUserDto.telefono !== undefined && typeof updateUserDto.telefono !== 'number') {
-      throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateUserDto.DNI !== undefined && typeof updateUserDto.DNI !== 'string') {
-      throw new HttpException('El DNI debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateUserDto.rol !== undefined && !Object.values(RolUsuario).includes(updateUserDto.rol)) {
-      throw new HttpException('El rol debe ser cliente o admin o veterinario', HttpStatus.BAD_REQUEST);
     }
 
     // Evitar duplicar email de otro usuario
