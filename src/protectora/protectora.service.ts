@@ -41,22 +41,6 @@ export class ProtectoraService {
     // Crear una nueva protectora
     async createProtectora(createProtectoraDto: CreateProtectoraDto): Promise<Protectora> {
 
-        if (typeof createProtectoraDto.nombre !== 'string') {
-            throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (typeof createProtectoraDto.direccion !== 'string') {
-            throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (typeof createProtectoraDto.telefono !== 'number') {
-            throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (createProtectoraDto.veterinarios && !Array.isArray(createProtectoraDto.veterinarios)) {
-            throw new HttpException('Los veterinarios deben ser un array de IDs numéricos', HttpStatus.BAD_REQUEST);
-        }
-
         let veterinarios: Veterinario[] = [];
         if (createProtectoraDto.veterinarios && createProtectoraDto.veterinarios.length > 0) {
             veterinarios = await this.veterinarioRepository.findBy({ id_veterinario: In(createProtectoraDto.veterinarios) });
@@ -82,22 +66,6 @@ export class ProtectoraService {
 
         if (!protectora) {
             throw new HttpException('Protectora no encontrada', HttpStatus.NOT_FOUND);
-        }
-
-        if (updateProtectoraDto.nombre !== undefined && typeof updateProtectoraDto.nombre !== 'string') {
-            throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (updateProtectoraDto.direccion !== undefined && typeof updateProtectoraDto.direccion !== 'string') {
-            throw new HttpException('La dirección debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateProtectoraDto.telefono !== undefined && typeof updateProtectoraDto.telefono !== 'number') {
-            throw new HttpException('El teléfono debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateProtectoraDto.veterinarios !== undefined && !Array.isArray(updateProtectoraDto.veterinarios)) {
-            throw new HttpException('Los veterinarios deben ser un array de IDs numéricos', HttpStatus.BAD_REQUEST);
         }
 
         if (updateProtectoraDto.veterinarios) {
