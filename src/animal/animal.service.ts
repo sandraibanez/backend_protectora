@@ -45,36 +45,6 @@ export class AnimalService {
     }
 
     async createAnimal(createAnimalDto: CreateAnimalDto): Promise<Animal> {
-        if (typeof createAnimalDto.nombre !== 'string') {
-            throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (typeof createAnimalDto.raza !== 'string') {
-            throw new HttpException('La raza debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (typeof createAnimalDto.f_nacimiento !== 'string' && !(createAnimalDto.f_nacimiento instanceof Date)) {
-            throw new HttpException('La fecha de nacimiento debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof createAnimalDto.f_nacimiento === 'string') {
-            if (isNaN(Date.parse(createAnimalDto.f_nacimiento))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (typeof createAnimalDto.esterilizado !== 'boolean' && createAnimalDto.esterilizado !== undefined) {
-            throw new HttpException('El campo esterilizado debe ser true o false', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (typeof createAnimalDto.protectora !== 'number') {
-            throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (createAnimalDto.medicaciones && !Array.isArray(createAnimalDto.medicaciones)) {
-            throw new HttpException('Las medicaciones deben ser un array de números', HttpStatus.BAD_REQUEST);
-        }
 
         // Validar protectora
         const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createAnimalDto.protectora });
@@ -118,38 +88,6 @@ export class AnimalService {
 
         if (!animal) {
             throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
-        }
-
-        if (updateAnimalDto.nombre !== undefined && typeof updateAnimalDto.nombre !== 'string') {
-            throw new HttpException('El nombre debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (updateAnimalDto.raza !== undefined && typeof updateAnimalDto.raza !== 'string') {
-            throw new HttpException('La raza debe ser texto', HttpStatus.BAD_REQUEST);
-        }
-
-        if (updateAnimalDto.f_nacimiento !== undefined && typeof updateAnimalDto.f_nacimiento !== 'string' &&
-            !(updateAnimalDto.f_nacimiento instanceof Date)) {
-            throw new HttpException('La fecha de nacimiento debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-        }else if (typeof updateAnimalDto.f_nacimiento === 'string') {
-            if (isNaN(Date.parse(updateAnimalDto.f_nacimiento))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-
-        if (updateAnimalDto.esterilizado !== undefined && typeof updateAnimalDto.esterilizado !== 'boolean') {
-            throw new HttpException('El campo esterilizado debe ser true o false', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateAnimalDto.protectora !== undefined && typeof updateAnimalDto.protectora !== 'number') {
-            throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
-        }
-        
-        if (updateAnimalDto.medicaciones !== undefined && !Array.isArray(updateAnimalDto.medicaciones)) {
-            throw new HttpException('Las medicaciones deben ser un array de números', HttpStatus.BAD_REQUEST);
         }
 
         // Actualizar protectora si se proporciona

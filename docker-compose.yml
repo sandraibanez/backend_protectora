@@ -18,6 +18,7 @@ services:
     - MYSQL_USER=${MYSQL_USER}
     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    - PWD=${PWD}
     restart: unless-stopped
   database:
     image: yobasystems/alpine-mariadb:11.4.5
@@ -30,6 +31,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - PWD=${PWD}
       - TZ=Europe/Berlin
     volumes:
      - ./data/db/mysql:/var/lib/mysql
