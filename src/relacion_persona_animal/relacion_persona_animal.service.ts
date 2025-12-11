@@ -40,29 +40,6 @@ export class RelacionPersonaAnimalService {
 
   async createRelacion(createRelacionDto: CreateRelacionPersonaAnimalDto): Promise<RelacionPersonaAnimal> {
 
-    if (typeof createRelacionDto.fecha !== 'string' && !(createRelacionDto.fecha instanceof Date)) {
-        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-    }else if (typeof createRelacionDto.fecha === 'string') {
-      if (isNaN(Date.parse(createRelacionDto.fecha))) {
-        throw new HttpException(
-          'La fecha debe tener formato válido YYYY-MM-DD',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    }
-
-    if (!Object.values(TipoRelacion).includes(createRelacionDto.accion)) {
-        throw new HttpException('La acción debe ser adopta, acoge o apadrina', HttpStatus.BAD_REQUEST);
-    }
-    
-    if (typeof createRelacionDto.persona !== 'number') {
-        throw new HttpException('El ID de la persona debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-    
-    if (typeof createRelacionDto.animal !== 'number') {
-        throw new HttpException('El ID del animal debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-
     const persona = await this.userRepository.findOneBy({ id_user: createRelacionDto.persona });
     if (!persona) {
       throw new HttpException('Usuario no encontrado', HttpStatus.BAD_REQUEST);
@@ -91,31 +68,6 @@ export class RelacionPersonaAnimalService {
 
     if (!relacion) {
       throw new HttpException('Relación no encontrada', HttpStatus.NOT_FOUND);
-    }
-
-    if (updateRelacionDto.fecha !== undefined &&
-        typeof updateRelacionDto.fecha !== 'string' &&
-        !(updateRelacionDto.fecha instanceof Date)) {
-        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-    }else if (typeof updateRelacionDto.fecha === 'string') {
-      if (isNaN(Date.parse(updateRelacionDto.fecha))) {
-        throw new HttpException(
-          'La fecha debe tener formato válido YYYY-MM-DD',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    }
-
-    if (updateRelacionDto.accion !== undefined && !Object.values(TipoRelacion).includes(updateRelacionDto.accion)) {
-        throw new HttpException('La acción debe ser adopta, acoge o apadrina', HttpStatus.BAD_REQUEST);
-    }
-    
-    if (updateRelacionDto.persona !== undefined && typeof updateRelacionDto.persona !== 'number') {
-        throw new HttpException('El ID de la persona debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-    
-    if (updateRelacionDto.animal !== undefined && typeof updateRelacionDto.animal !== 'number') {
-        throw new HttpException('El ID del animal debe ser un número', HttpStatus.BAD_REQUEST);
     }
 
     // Actualizar las relaciones si se pasan nuevos IDs
