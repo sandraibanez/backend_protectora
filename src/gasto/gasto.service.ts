@@ -34,29 +34,6 @@ export class GastoService {
 
   async createGasto(createGastoDto: CreateGastoDto): Promise<Gasto> {
 
-    if (typeof createGastoDto.tipo !== 'string') {
-        throw new HttpException('El tipo de gasto debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (typeof createGastoDto.cantidad !== 'number') {
-        throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-    
-    if (typeof createGastoDto.fecha !== 'string' && !(createGastoDto.fecha instanceof Date)) {
-        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-    }else if (typeof createGastoDto.fecha === 'string') {
-            if (isNaN(Date.parse(createGastoDto.fecha))) {
-                throw new HttpException(
-                    'La fecha debe tener formato válido YYYY-MM-DD',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
-    
-    if (typeof createGastoDto.protectora !== 'number') {
-        throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-
     // Verificar que la protectora existe
     const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createGastoDto.protectora });
     if (!protectora) {
@@ -79,31 +56,6 @@ export class GastoService {
 
     if (!gasto) {
         throw new HttpException('Gasto no encontrado', HttpStatus.NOT_FOUND);
-    }
-
-    if (updateGastoDto.tipo !== undefined && typeof updateGastoDto.tipo !== 'string') {
-        throw new HttpException('El tipo de gasto debe ser texto', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateGastoDto.cantidad !== undefined && typeof updateGastoDto.cantidad !== 'number') {
-        throw new HttpException('La cantidad debe ser un número', HttpStatus.BAD_REQUEST);
-    }
-
-    if (updateGastoDto.fecha !== undefined &&
-        typeof updateGastoDto.fecha !== 'string' &&
-        !(updateGastoDto.fecha instanceof Date)) {
-        throw new HttpException('La fecha debe ser una fecha válida', HttpStatus.BAD_REQUEST);
-    }else if (typeof updateGastoDto.fecha === 'string') {
-      if (isNaN(Date.parse(updateGastoDto.fecha))) {
-        throw new HttpException(
-          'La fecha debe tener formato válido YYYY-MM-DD',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    }
-
-    if (updateGastoDto.protectora !== undefined && typeof updateGastoDto.protectora !== 'number') {
-        throw new HttpException('El ID de la protectora debe ser un número', HttpStatus.BAD_REQUEST);
     }
 
   // Actualizar protectora si se proporciona
