@@ -5,6 +5,7 @@ import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -17,7 +18,7 @@ export class AuthService {
         pass: string,
     ): Promise<{ access_token: string }> {
         const user = await this.getUserlogin(email);
-        if (user?.contrasenya !== pass && user?.email !== email) {
+        if (user?.contrasenya !== pass) {
             throw new UnauthorizedException();
         }
         console.log("service", user);

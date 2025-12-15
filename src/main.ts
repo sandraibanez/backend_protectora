@@ -6,6 +6,11 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
+  app.enableCors({
+    origin: true, // o puedes poner ['http://localhost:3000', 'http://10.0.2.2:3000']
+    credentials: true,
+  });
+
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,       
     forbidNonWhitelisted: true, 
@@ -14,11 +19,21 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Protectora')
-    .setDescription('The cats API description')
+    .setDescription('The API description')
     .setVersion('1.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'Authorization',
+      in: 'header',
+    }, 'access-token')
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+    
+  const documentFactory = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
+  app.getHttpAdapter().getInstance().disable('etag');
+
 
   await app.listen(process.env.PORT ?? 3000);
 }
