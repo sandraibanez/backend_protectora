@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { ColoniaService } from './colonia.service';
 import { CreateColoniaDto, UpdateColoniaDto } from './colonia.dto';
+import { AuthGuard } from 'src/authentication/auth/guard';
 
 @Controller('colonias')
 export class ColoniaController {
@@ -20,13 +21,24 @@ export class ColoniaController {
     }
     return this.coloniaService.getColonia(coloniaId);
   }
+
+  @UseGuards(AuthGuard)
   @Post()
-  createColonia(@Body() createColoniaDto: CreateColoniaDto) {
+  createColonia(@Body() createColoniaDto: CreateColoniaDto, @Request() req) {
+  let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para crear colonias', HttpStatus.FORBIDDEN); 
+    }
     return this.coloniaService.createColonia(createColoniaDto);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
-  updateColonia(@Param('id') id: string, @Body() updateColoniaDto: UpdateColoniaDto) {
+  updateColonia(@Param('id') id: string, @Body() updateColoniaDto: UpdateColoniaDto, @Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para actualizar colonias', HttpStatus.FORBIDDEN); 
+    }
     const coloniaId = parseInt(id);
     if (isNaN(coloniaId)) {
       throw new HttpException('Invalid colonia ID', HttpStatus.BAD_REQUEST);
@@ -37,8 +49,13 @@ export class ColoniaController {
     });
   }
   
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  deleteColonia(@Param('id') id: string) {
+  deleteColonia(@Param('id') id: string, @Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para eliminar colonias', HttpStatus.FORBIDDEN); 
+    }
     const coloniaId = parseInt(id);
     if (isNaN(coloniaId)) {
       throw new HttpException('Invalid colonia ID', HttpStatus.BAD_REQUEST);

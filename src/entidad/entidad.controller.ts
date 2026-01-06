@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request} from '@nestjs/common';
 import { EntidadService } from './entidad.service';
 import { CreateEntidadDto, UpdateEntidadDto } from './entidad.dto';
+import { AuthGuard } from 'src/authentication/auth/guard';
 
 @Controller('entidades')
 export class EntidadController {
@@ -19,13 +20,24 @@ export class EntidadController {
     }
     return this.entidadService.getEntidad(EntidadId);
   }
+
+  @UseGuards(AuthGuard)
   @Post()
-  createEntidad(@Body() createEntidadDto: CreateEntidadDto) {
+  createEntidad(@Body() createEntidadDto: CreateEntidadDto, @Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para crear entidades', HttpStatus.FORBIDDEN); 
+    }
     return this.entidadService.createEntidad(createEntidadDto);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
-  updateEntidad(@Param('id') id: string, @Body() updateEntidad: UpdateEntidadDto) {
+  updateEntidad(@Param('id') id: string, @Body() updateEntidad: UpdateEntidadDto, @Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para actualizar entidades', HttpStatus.FORBIDDEN); 
+    }
     const EntidadId = parseInt(id);
     if (isNaN(EntidadId)) {
       throw new HttpException('Invalid entidad ID', HttpStatus.BAD_REQUEST);
@@ -36,8 +48,13 @@ export class EntidadController {
     });
   }
   
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  deleteEntidad(@Param('id') id: string) {
+  deleteEntidad(@Param('id') id: string, @Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para eliminar entidades', HttpStatus.FORBIDDEN); 
+    }
     const EntidadId = parseInt(id);
     if (isNaN(EntidadId)) {
       throw new HttpException('Invalid entidad ID', HttpStatus.BAD_REQUEST);
