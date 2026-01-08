@@ -12,27 +12,48 @@
       private readonly relacionService: RelacionPersonaAnimalService,
     ) {}
 
+    @UseGuards(AuthGuard)
     @Get()
-    findAll() {
+    findAll(@Request() req) {
+      let userCurrent = req.user.rol;
+      if (userCurrent !== 'admin') { 
+        throw new HttpException('No tienes permisos para ver relaciones', HttpStatus.FORBIDDEN); 
+      }
       return this.relacionService.findAll();
     }
 
+    @UseGuards(AuthGuard)
     @Get(':id_relacion')
-    getRelacion(@Param('id_relacion') id_relacion: string) {
-      const relacionId = parseInt(id_relacion);
-      if (isNaN(relacionId)) {
-        throw new HttpException('ID inválido', HttpStatus.BAD_REQUEST);
+    async getRelacion(@Param('id_relacion') id_relacion: string, @Request() req) {
+      let userCurrent = req.user; 
+      if (userCurrent.rol !== 'admin' && userCurrent.rol !== 'cliente') { 
+        throw new HttpException('No tienes permisos para ver relaciones', HttpStatus.FORBIDDEN); 
       }
-      return this.relacionService.getRelacion(relacionId);
+      const relacionId = parseInt(id_relacion); 
+      if (isNaN(relacionId)) { 
+        throw new HttpException('ID inválido', HttpStatus.BAD_REQUEST); 
+      }
+
+      const relacion = await this.relacionService.getRelacion(relacionId); 
+
+      // Cliente solo puede ver sus propias relaciones 
+      if (userCurrent.rol === 'cliente' && relacion.persona.id_user !== userCurrent.id_user) { 
+        throw new HttpException('No tienes permisos para ver esta relación', HttpStatus.FORBIDDEN); 
+      }
+      return relacion;
     }
 
     @UseGuards(AuthGuard)
     @Post()
     createRelacion(@Body() dto: CreateRelacionPersonaAnimalDto, @Request() req) {
-      let userCurrent = req.user.rol;
-      if (userCurrent !== 'admin') { 
+      let userCurrent = req.user;
+      
+      if (userCurrent.rol === 'cliente') { 
+        dto.persona = userCurrent.id_user; 
+      } else if (userCurrent.rol !== 'admin') { 
         throw new HttpException('No tienes permisos para crear relaciones', HttpStatus.FORBIDDEN); 
       }
+
       return this.relacionService.createRelacion(dto);
     }
 

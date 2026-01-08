@@ -23,7 +23,6 @@ export class AnimalController {
 
   @UseGuards(AuthGuard)
   @Post()
-  
   createAnimal(@Body() createAnimalDto: CreateAnimalDto, @Request() req) { 
     let userCurrent = req.user.rol;
     if (userCurrent !== 'admin') { 

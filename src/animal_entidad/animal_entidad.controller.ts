@@ -9,13 +9,23 @@ import { promises } from 'dns';
 export class AnimalEntidadController {
   constructor(private readonly animalEntidadService: AnimalEntidadService) {}
 
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
+  findAll(@Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para ver animal-entidad', HttpStatus.FORBIDDEN); 
+    }
     return this.animalEntidadService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  getAnimalEntidad(@Param('id') id: string) {
+  getAnimalEntidad(@Param('id') id: string, @Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin') { 
+      throw new HttpException('No tienes permisos para ver animal-entidad', HttpStatus.FORBIDDEN); 
+    }
     const animalEntidadId = parseInt(id);
     if (isNaN(animalEntidadId)) {
       throw new HttpException('Invalid animal-entidad ID', HttpStatus.BAD_REQUEST);

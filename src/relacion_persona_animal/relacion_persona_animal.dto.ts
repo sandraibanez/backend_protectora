@@ -22,8 +22,10 @@ export class CreateRelacionPersonaAnimalDto {
     example: 3,
     description: 'ID del usuario (persona) que realiza la acción sobre el animal',
   })
+  
+  @IsOptional()
   @IsInt()
-  persona: number;
+  persona?: number;
 
   @ApiProperty({
     example: 1,

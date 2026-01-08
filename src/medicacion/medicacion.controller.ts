@@ -8,13 +8,23 @@ export class MedicacionController {
     // MedicacionService: any;
   constructor(private readonly medicacionService: MedicacionService) {}
 
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
+  findAll(@Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
+      throw new HttpException('No tienes permisos para ver medicaciones', HttpStatus.FORBIDDEN); 
+    }
     return this.medicacionService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  getMedicacion(@Param('id') id: string) {
+  getMedicacion(@Param('id') id: string, @Request() req) {
+    let userCurrent = req.user.rol;
+    if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
+      throw new HttpException('No tienes permisos para ver medicaciones', HttpStatus.FORBIDDEN); 
+    }
     const medicacionId = parseInt(id);
     if (isNaN(medicacionId)) {
       throw new HttpException('Invalid medicacion ID', HttpStatus.BAD_REQUEST);
