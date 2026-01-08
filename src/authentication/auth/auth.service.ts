@@ -18,6 +18,8 @@ export class AuthService {
         pass: string,
     ): Promise<{ access_token: string }> {
         const user = await this.getUserlogin(email);
+
+        // REVISAR: Compara contraseña en texto plano
         if (user?.contrasenya !== pass) {
             throw new UnauthorizedException();
         }

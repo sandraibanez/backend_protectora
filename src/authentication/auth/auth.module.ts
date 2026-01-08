@@ -8,7 +8,6 @@ import { jwtConstants } from './constants';
 import { UserModule } from 'src/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
-import { AuthMiddleware } from './auth.middleware';
 @Module({
   imports:[
     TypeOrmModule.forFeature([User]),
