@@ -3,7 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { jwtConstants } from '../authentication/auth/constants';
+import { jwtConstants } from '../authentication/guards/constants';
 import { JwtModule } from '@nestjs/jwt';
 
 

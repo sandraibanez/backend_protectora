@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request} from '@nestjs/common';
 import { EntidadService } from './entidad.service';
 import { CreateEntidadDto, UpdateEntidadDto } from './entidad.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('entidades')
 export class EntidadController {

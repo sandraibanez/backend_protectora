@@ -3,7 +3,7 @@ import { AnimalVeterinarioService } from './animal_veterinario.service';
 import { AnimalVeterinario } from './animal_veterinario.entity';
 import { CreateAnimalVeterinarioDto, UpdateAnimalVeterinarioDto } from './animal_veterinario.dto';
 import { promises } from 'dns';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('animal-veterinario')
 export class AnimalVeterinarioController {

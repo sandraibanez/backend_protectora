@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { GastoService } from './gasto.service';
 import { CreateGastoDto, UpdateGastoDto } from './gasto.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('gastos')
 export class GastoController {

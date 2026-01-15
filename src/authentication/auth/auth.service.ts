@@ -4,28 +4,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
-export class AuthService {
-    constructor(
-        private jwtService: JwtService,
-        @InjectRepository(User)
+export class AuthService { constructor( private jwtService: JwtService, @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ) { }
-    async signIn(
-        email: string,
-        pass: string,
-    ): Promise<{ access_token: string }> {
+    async signIn( email: string, pass: string ): Promise<{ access_token: string }> {
         const user = await this.getUserlogin(email);
 
-        // REVISAR: Compara contraseña en texto plano
-        if (user?.contrasenya !== pass) {
+        const passwordMatch = await bcrypt.compare(pass, user.contrasenya);
+
+        if (!passwordMatch) {
             throw new UnauthorizedException();
         }
-        console.log("service", user);
-
-        const payload = { rol: user.rol, nombre: user.nombre, idUser: user.id_user };
+        const payload = { rol: user.rol, nombre: user.nombre, id_user: user.id_user };
         return {
             access_token: await this.jwtService.signAsync(payload),
         };

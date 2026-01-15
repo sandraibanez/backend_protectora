@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { VeterinarioService } from './veterinario.service';
 import { CreateVeterinarioDto, UpdateVeterinarioDto } from './veterinario.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('veterinarios')
 export class VeterinarioController {

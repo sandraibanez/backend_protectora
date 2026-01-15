@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { DonacionesViveresService } from './donaciones_viveres.service';
 import { CreateDonacionesViveresDto, UpdateDonacionesViveresDto } from './donaciones_viveres.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('donaciones-viveres')
 export class DonacionesViveresController {

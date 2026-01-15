@@ -1,80 +1,113 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Request, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AdminUpdateUserDto, CreateUserDto, UpdatePasswordDto, UpdateUserDto } from './user.dto';
+import { AuthGuard } from 'src/authentication/guards/guard';
 import { log } from 'console';
+import { ApiTags, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
+@ApiTags('Users') 
 @Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
   ) { }
 
-
-
-  // para que el usuario admin pueda ver todos los uusarios de la aplicacion
-  // @UseGuards(AuthGuard)
-  @Get()
-  findAll(@Request() req) {
-    // let userCurrent = req.user.rol;
-    // if (userCurrent == "admin") {
-      return this.userService.findAll();
-    // } else {
-    //   throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
-    // }
-  }
-
-  // para que un usuario admin pueda ver toda la informacion de un usuario en concreto
+  // Admin pueda ver todos los usarios
+  @ApiOperation({ summary: 'Obtener todos los usuarios (solo admin)' }) 
+  @ApiConsumes('application/x-www-form-urlencoded')// 
   @UseGuards(AuthGuard)
-  @Get(':id_user')
-  getUser(@Param('id_user') id_user: number, @Request() req) {
+  @Get("get")
+  findAll(@Request() req) {
     let userCurrent = req.user.rol;
     if (userCurrent == "admin") {
-      const idUser = id_user;
-      return this.userService.getUser(idUser);
+      return this.userService.findAll();
     } else {
       throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
     }
   }
 
-  // para que un usuario admin o cliente pueda ver una parte de la informacion de un usuario en concreto
+  // Usuario pueda ver su información
+  @ApiOperation({ summary: 'Obtener información del usuario logeado' }) 
+  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
-  @Get('client/:id_user')
-  getUserClient(@Param('id_user') id_user: number, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent == "admin" || userCurrent == "cliente") {
-      const idUser = id_user;
-      return this.userService.getUserClient(idUser);
-    } else {
-      throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
-    }
+  @Get('get-me')
+  getMyUser(@Request() req) {
+    return this.userService.getUserClient(req.user.id_user);
   }
+  
+  // Usuario admin o cliente pueda ver una parte de la informacion de un usuario en concreto
+  @ApiOperation({ summary: 'Obtener información limitada de un usuario' }) 
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @UseGuards(AuthGuard)
+  @Get('get-client/:id_user')
+  getUserClient(@Param('id_user') id_user: number, @Request() req) {
+    let userCurrent = req.user;
+    // Si es admin puede ver cualquier usuario 
+    if (userCurrent.rol === 'admin') { 
+      return this.userService.getUserClient(id_user); 
+    } 
+    // Si es cliente solo puede ver su propia info 
+    if (userCurrent.rol === 'cliente') { 
+      return this.userService.getUserClient(userCurrent.id_user); 
+    }
 
-  // registra un nuevo usuario
-  @Post()
+    throw new HttpException( 'No tienes permisos para ver la información de los usuarios', HttpStatus.FORBIDDEN );
+  }
+  
+  // Registra un nuevo usuario
+  @ApiOperation({ summary: 'Registrar un nuevo usuario' }) 
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @Post("post")
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
 
-  // actualizar los datos del usuario 
+  // Actualizar usuario
+  @ApiOperation({ summary: 'Actualizar datos de un usuario (solo admin)' })
+  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
-  @Put()
-  updateUser( @Body() updateUserDto: UpdateUserDto, @Request() req) {
-    let id_user = req.user.idUser;
-    console.log(id_user);
-    const userId = parseInt(id_user);
-    if (isNaN(userId)) {
-      throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+  @Put('admin/:id_user')
+  @ApiBody({ type: AdminUpdateUserDto })
+  updateUserAsAdmin( @Param('id_user') id_user: number, @Body() updateUserDto: AdminUpdateUserDto, @Request() req) {
+    if (req.user.rol !== 'admin') {
+      throw new HttpException('No tienes permisos', HttpStatus.FORBIDDEN);
     }
-    return this.userService.updateUser({
-      ...updateUserDto,
-      id_user: userId,
-    });
+
+    return this.userService.adminUpdateUser(id_user, updateUserDto);
   }
 
-  // el usuario tipo admin puede eliminar un usuario
+
+  // Usuario puede actualizar su informacion
+  @ApiOperation({ summary: 'Actualizar datos del usuario logeado' }) 
+  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
-  @Delete(':id_user')
+  @Put('put-me')
+  updateMyUser(@Body() updateUserDto: UpdateUserDto, @Request() req) {
+    return this.userService.updateUser(req.user.id_user, updateUserDto);
+  }
+
+  // usuario puede actualizar su contraseña
+  @ApiOperation({ summary: 'Actualizar contraseña del usuario logeado' }) 
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @UseGuards(AuthGuard)
+  @Put('put-me/password')
+  updateMyPassword(@Body() body: UpdatePasswordDto, @Request() req) {
+    const id_user = req.user.id_user;
+
+    return this.userService.updatePassword(
+      id_user,
+      body.currentPassword,
+      body.newPassword
+    );
+  }
+
+
+  // el usuario tipo admin puede eliminar un usuario
+  @ApiOperation({ summary: 'Eliminar un usuario (solo admin)' }) 
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @UseGuards(AuthGuard)
+  @Delete('delete-:id_user')
   deleteUser(@Param('id_user') id_user: string, @Request() req) {
     let userCurrent = req.user.rol;
     if (userCurrent == "admin") {
@@ -86,7 +119,5 @@ export class UserController {
     } else {
       throw new HttpException('No tienes permisos para eliminar usuarios', HttpStatus.FORBIDDEN);
     }
-
-
   }
 }

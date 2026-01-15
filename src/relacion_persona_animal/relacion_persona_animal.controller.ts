@@ -4,7 +4,7 @@
     CreateRelacionPersonaAnimalDto,
     UpdateRelacionPersonaAnimalDto,
   } from './relacion_persona_animal.dto';
-  import { AuthGuard } from 'src/authentication/auth/guard';
+  import { AuthGuard } from 'src/authentication/guards/guard';
 
   @Controller('relacion-persona-animal')
   export class RelacionPersonaAnimalController {

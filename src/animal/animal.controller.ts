@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request} from '@nestjs/common';
 import { AnimalService } from './animal.service';
 import { CreateAnimalDto, UpdateAnimalDto } from './animal.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('animales')
 export class AnimalController {

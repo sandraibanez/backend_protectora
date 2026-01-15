@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, 
 import { AnimalEntidadService } from './animal_entidad.service';
 import { Animal_Entidad } from './animal_entidad.entity';
 import { CreateAnimalEntidadDto, UpdateAnimalEntidadDto } from './animal_entidad.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 import { promises } from 'dns';
 
 @Controller('animal-entidad')

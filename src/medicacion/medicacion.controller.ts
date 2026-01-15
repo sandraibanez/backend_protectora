@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { MedicacionService } from './medicacion.service';
 import { CreateMedicacionDto, UpdateMedicacionDto } from './medicacion.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('medicaciones')
 export class MedicacionController {

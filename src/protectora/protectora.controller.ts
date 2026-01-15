@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { CreateProtectoraDto, UpdateProtectoraDto } from './protectora.dto';
 import { ProtectoraService } from './protectora.service';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('protectoras')
 export class ProtectoraController {

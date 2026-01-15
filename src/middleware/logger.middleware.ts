@@ -21,7 +21,7 @@ export class LoggerMiddleware implements NestMiddleware {
 
       // Si el usuario está autenticado lo muestra
       const userInfo = req['user']
-        ? `${cyan}user:${req['user'].idUser}${reset}`
+        ? `${cyan}user:${req['user'] as { id_user: number }}${reset}`
         : `${yellow}anon${reset}`;
 
       console.log(

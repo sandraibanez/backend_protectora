@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { IngresoService } from './ingreso.service';
 import { CreateIngresoDto, UpdateIngresoDto } from './ingreso.dto';
-import { AuthGuard } from 'src/authentication/auth/guard';
+import { AuthGuard } from 'src/authentication/guards/guard';
 
 @Controller('ingresos')
 export class IngresoController {

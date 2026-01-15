@@ -2,8 +2,9 @@ import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@n
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RolUsuario, User } from './user.entity';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { AdminUpdateUserDto, CreateUserDto, UpdateUserDto } from './user.dto';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -28,18 +29,33 @@ export class UserService {
     return user;
   }
 
-  // Obtener un usuario por ID pero devuelve menos informacion por si un usuario quiere consular informacion de otro usuario
-  async getUserClient(id: number): Promise<{ nombre: string; email: string, telefono: number }> {
-   const user = await this.userRepository.findOneBy({ id_user: id });
+  // Obtener el usuario propio pero devuelve menos informacion
+  async getUserClient(id: number): Promise<{
+    id_user: number;
+    nombre: string;
+    email: string;
+    telefono: number;
+    direccion: string;
+    DNI: string;
+    rol: string;
+  }> {
+    const user = await this.userRepository.findOneBy({ id_user: id });
+
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }
+
     return {
+      id_user: user.id_user,
       nombre: user.nombre,
       email: user.email,
-      telefono: user.telefono
+      telefono: user.telefono,
+      direccion: user.direccion,
+      DNI: user.DNI,
+      rol: user.rol,
     };
   }
+
 
   // Crear un nuevo usuario
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -53,16 +69,28 @@ export class UserService {
     }
 
     const newUser = this.userRepository.create(createUserDto);
+
+    // Hashear la contraseña
+    const saltOrRounds = 10; 
+    newUser.contrasenya = await bcrypt.hash(createUserDto.contrasenya, saltOrRounds);
+
     return this.userRepository.save(newUser);
   }
 
   // Actualizar un usuario existente
-  async updateUser(updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id_user: updateUserDto.id_user });
+  async updateUser(id_user: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id_user });
 
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }
+
+    // Filtrar campos vacíos ("") a undefined 
+    Object.keys(updateUserDto).forEach((key) => { 
+      if (updateUserDto[key] === '') { 
+        updateUserDto[key] = undefined; 
+      } 
+    });
 
     // Evitar duplicar email de otro usuario
     if (updateUserDto.email && updateUserDto.email !== user.email) {
@@ -70,13 +98,76 @@ export class UserService {
         where: { email: updateUserDto.email },
       });
       if (existingEmail) {
-        throw new HttpException('El email ya está registrado por otro usuario', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'El email ya está registrado por otro usuario',
+          HttpStatus.BAD_REQUEST,
+        );
       }
     }
 
     this.userRepository.merge(user, updateUserDto);
     return this.userRepository.save(user);
   }
+
+  // Actualizar un usuario existente
+  async adminUpdateUser(id_user: number, updateUserDto: AdminUpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id_user });
+
+    if (!user) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // Filtrar campos vacíos ("") a undefined 
+    Object.keys(updateUserDto).forEach((key) => { 
+      if (updateUserDto[key] === '') { 
+        updateUserDto[key] = undefined; 
+      } 
+    });
+
+    // Evitar duplicar email de otro usuario
+    if (updateUserDto.email && updateUserDto.email !== user.email) {
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: updateUserDto.email },
+      });
+      if (existingEmail) {
+        throw new HttpException(
+          'El email ya está registrado por otro usuario',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+
+    // Si el admin envía una nueva contraseña
+    if (updateUserDto.newPassword) { 
+      const hashedPassword = await bcrypt.hash(updateUserDto.newPassword, 10); 
+      user.contrasenya = hashedPassword; 
+    }
+
+    this.userRepository.merge(user, updateUserDto);
+    return this.userRepository.save(user);
+  }
+
+  // Actualizar un contraseña
+  async updatePassword(id_user: number, currentPassword: string, newPassword: string): Promise<void> {
+    const user = await this.userRepository.findOneBy({ id_user });
+
+    if (!user) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // Verificar contraseña actual
+    const passwordMatch = await bcrypt.compare(currentPassword, user.contrasenya);
+    if (!passwordMatch) {
+      throw new HttpException('La contraseña actual es incorrecta', HttpStatus.BAD_REQUEST);
+    }
+
+    // Hashear nueva contraseña
+    const saltOrRounds = 10;
+    user.contrasenya = await bcrypt.hash(newPassword, saltOrRounds);
+
+    await this.userRepository.save(user);
+  }
+
 
   // Eliminar un usuario con comprobación
   async deleteUser(id_user: number): Promise<void> {
