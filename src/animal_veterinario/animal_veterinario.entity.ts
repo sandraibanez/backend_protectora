@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Animal } from 'src/animal/animal.entity';
 import { Veterinario } from 'src/veterinario/veterinario.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { ConsultaMedicacion } from 'src/consulta_medicacion/consulta_medicacion.entity';
 
 @Entity('animalVeterinario')
 export class AnimalVeterinario {
@@ -27,4 +28,8 @@ export class AnimalVeterinario {
     @ManyToOne(() => Veterinario, (veterinario) => veterinario.animalVeterinarios, { eager: true })
     @JoinColumn({ name: 'veterinario' })
     veterinario: Veterinario;
+
+    @ApiProperty({ type: () => [ConsultaMedicacion], description: 'Medicaciones administradas durante esta consulta veterinaria', })
+    @OneToMany(() => ConsultaMedicacion, consultaMedicacion => consultaMedicacion.consulta) 
+    consultaMedicaciones: ConsultaMedicacion[];
 }

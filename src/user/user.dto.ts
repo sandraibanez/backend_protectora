@@ -77,6 +77,7 @@ export class AdminUpdateUserDto {
 
   @ApiPropertyOptional({ enum: RolUsuario, example: RolUsuario.ADMIN, description: 'Rol del usuario' })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsEnum(RolUsuario)
   rol?: RolUsuario;
 

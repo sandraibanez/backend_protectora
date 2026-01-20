@@ -15,12 +15,12 @@ export class UserController {
 
   // Admin pueda ver todos los usarios
   @ApiOperation({ summary: 'Obtener todos los usuarios (solo admin)' }) 
-  @ApiConsumes('application/x-www-form-urlencoded')// 
+  @ApiConsumes('application/x-www-form-urlencoded') 
   @UseGuards(AuthGuard)
   @Get("get")
   findAll(@Request() req) {
     let userCurrent = req.user.rol;
-    if (userCurrent == "admin") {
+    if (userCurrent === "admin") {
       return this.userService.findAll();
     } else {
       throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
@@ -47,15 +47,15 @@ export class UserController {
     if (userCurrent.rol === 'admin') { 
       return this.userService.getUserClient(id_user); 
     } 
-    // Si es cliente solo puede ver su propia info 
-    if (userCurrent.rol === 'cliente') { 
+    // Si es cliente o veterinario solo puede ver su propia info 
+    if (userCurrent.rol === 'cliente' || userCurrent.rol == 'veterinario') { 
       return this.userService.getUserClient(userCurrent.id_user); 
     }
 
     throw new HttpException( 'No tienes permisos para ver la información de los usuarios', HttpStatus.FORBIDDEN );
   }
   
-  // Registra un nuevo usuario
+  // Registra un nuevo usuario (solo cliente??)
   @ApiOperation({ summary: 'Registrar un nuevo usuario' }) 
   @ApiConsumes('application/x-www-form-urlencoded')
   @Post("post")
@@ -70,7 +70,7 @@ export class UserController {
   @Put('admin/:id_user')
   @ApiBody({ type: AdminUpdateUserDto })
   updateUserAsAdmin( @Param('id_user') id_user: number, @Body() updateUserDto: AdminUpdateUserDto, @Request() req) {
-    if (req.user.rol !== 'admin') {
+    if (req.user.rol === 'admin') {
       throw new HttpException('No tienes permisos', HttpStatus.FORBIDDEN);
     }
 
@@ -110,7 +110,7 @@ export class UserController {
   @Delete('delete-:id_user')
   deleteUser(@Param('id_user') id_user: string, @Request() req) {
     let userCurrent = req.user.rol;
-    if (userCurrent == "admin") {
+    if (userCurrent === "admin") {
       const userId = parseInt(id_user);
       if (isNaN(userId)) {
         throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);

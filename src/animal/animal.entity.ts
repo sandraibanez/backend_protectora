@@ -48,11 +48,6 @@ export class Animal {
   @Column({ default: false })
   esterilizado: boolean;
 
-  @ApiProperty({ type: () => [Medicacion], description: 'Relaciones con medicacion' })
-  @ManyToMany(() => Medicacion, (medicacion) => medicacion.animales)
-  @JoinTable()
-  medicaciones: Medicacion[];
-
   @ApiProperty({ type: () => Protectora, description: 'Protectora a la que pertenece el animal' })
   @ManyToOne(() => Protectora, (protectora) => protectora.id_protectora)
   protectora: Protectora;

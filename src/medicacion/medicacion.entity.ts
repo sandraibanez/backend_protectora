@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
-import { Animal } from 'src/animal/animal.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { ConsultaMedicacion } from 'src/consulta_medicacion/consulta_medicacion.entity';
 
 @Entity('medicaciones')
 export class Medicacion {
@@ -8,30 +8,26 @@ export class Medicacion {
   @PrimaryGeneratedColumn()
   id_medicacion: number;
 
-  @ApiProperty({ example: '2025-11-01', description: 'Fecha de inicio del tratamiento médico del animal' })
-  @Column({ type: 'date' })
-  f_inicio: Date;
-
-  @ApiProperty({ example: '2025-11-30', description: 'Fecha de finalización del tratamiento médico' })
-  @Column({ type: 'date' })
-  f_fin: Date;
-
-  @ApiProperty({ example: 'Paracetamol', description: 'Nombre del medicamento administrado' })
+  @ApiProperty({ example: 'Paracetamol', description: 'Nombre del medicamento' })
   @Column({ length: 100 })
   nombre: string;
 
-  @ApiProperty({ example: '1mg cada 8 horas', description: 'Dosis y frecuencia de administración del medicamento' })
-  @Column({ length: 50 })
-  dosis: string;
-
-  @ApiProperty({ example: 'receta.png', description: 'Ruta o nombre del archivo de la receta médica (opcional)' })
+  @ApiProperty({ example: 'Analgésico y antipirético', description: 'Descripción del medicamento' })
   @Column({ nullable: true })
-  foto_receta: string;
+  descripcion?: string;
+
+  @ApiProperty({ example: 'oral / inyectable', description: 'Vía de administración del medicamento' })
+  @Column({ nullable: true })
+  via_administracion?: string;
+
+  @ApiProperty({ example: 'receta.png', description: 'Ruta o nombre del archivo de la receta médica' })
+  @Column({ nullable: true })
+  foto_receta?: string;
 
   @ApiProperty({
-    type: () => [Animal],
-    description: 'Lista de animales que están recibiendo esta medicación',
+    type: () => [ConsultaMedicacion],
+    description: 'Administraciones clínicas donde se ha usado este medicamento',
   })
-  @ManyToMany(() => Animal, (animal) => animal.medicaciones)
-  animales: Animal[];
+  @OneToMany(() => ConsultaMedicacion, (consultaMedicacion) => consultaMedicacion.medicacion)
+  consultaMedicaciones: ConsultaMedicacion[];
 }

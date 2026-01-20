@@ -10,15 +10,12 @@ export class MedicacionService {
     constructor(
         @InjectRepository(Medicacion)
         private readonly medicacionRepository: Repository<Medicacion>,
-
-        @InjectRepository(Animal)
-        private readonly animalRepository: Repository<Animal>,
     ) {}
 
     // Obtener todas las medicaciones
     findAll(): Promise<Medicacion[]> {
         return this.medicacionRepository.find({
-            relations: ['animales'],
+            relations: ['consultaMedicaciones'],
         });
     }
 
@@ -26,7 +23,7 @@ export class MedicacionService {
     async getMedicacion(id_medicacion: number): Promise<Medicacion> {
         const medicacion = await this.medicacionRepository.findOne({
             where: { id_medicacion },
-            relations: ['animales'],
+            relations: ['consultaMedicaciones'],
         });
 
         if (!medicacion) {
@@ -39,22 +36,9 @@ export class MedicacionService {
     // Crear una nueva medicación
     async createMedicacion(createMedicacionDto: CreateMedicacionDto): Promise<Medicacion> {
 
-        // Validar animales
-        let animales: Animal[] = [];
-        if (createMedicacionDto.animales && createMedicacionDto.animales.length > 0) {
-            animales = await this.animalRepository.findBy({
-                id_animal: In(createMedicacionDto.animales),
-            });
-
-            if (animales.length !== createMedicacionDto.animales.length) {
-                throw new HttpException('Algún animal introducido no existe', HttpStatus.BAD_REQUEST);
-            }
-        }
-
         // Crear la medicación
         const medicacion = this.medicacionRepository.create({
             ...createMedicacionDto,
-            animales,
         });
 
         // Guardar y devolver
@@ -64,9 +48,8 @@ export class MedicacionService {
     // Actualizar una medicación existente
     async updateMedicacion(updateMedicacionDto: UpdateMedicacionDto): Promise<Medicacion> {
         // Buscar la medicación existente con sus relaciones
-        const medicacion = await this.medicacionRepository.findOne({
-            where: { id_medicacion: updateMedicacionDto.id_medicacion },
-            relations: ['animales'],
+        const medicacion = await this.medicacionRepository.findOne({ 
+            where: { id_medicacion: updateMedicacionDto.id_medicacion }, 
         });
 
         if (!medicacion) {
@@ -74,25 +57,14 @@ export class MedicacionService {
         }
 
         // Actualizar campos simples
-        const camposSimples = {
-            f_inicio: updateMedicacionDto.f_inicio,
-            f_fin: updateMedicacionDto.f_fin,
-            nombre: updateMedicacionDto.nombre,
-            dosis: updateMedicacionDto.dosis,
+        const camposSimples = { 
+            nombre: updateMedicacionDto.nombre, 
+            descripcion: updateMedicacionDto.descripcion, 
+            via_administracion: updateMedicacionDto.via_administracion, 
             foto_receta: updateMedicacionDto.foto_receta,
         };
-        this.medicacionRepository.merge(medicacion, camposSimples);
 
-        // Validar y actualizar animales si se proporcionan
-        if (updateMedicacionDto.animales && updateMedicacionDto.animales.length > 0) {
-            const animales = await this.animalRepository.findBy({
-                id_animal: In(updateMedicacionDto.animales),
-            });
-            if (animales.length !== updateMedicacionDto.animales.length) {
-                throw new HttpException('Algún animal introducido no existe', HttpStatus.BAD_REQUEST);
-            }
-            medicacion.animales = animales;
-        }
+        this.medicacionRepository.merge(medicacion, camposSimples);
 
         // Guardar cambios
         return this.medicacionRepository.save(medicacion);

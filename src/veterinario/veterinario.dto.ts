@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsArray, IsNumber, IsInt, Length } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateVeterinarioDto {
   @ApiProperty({
@@ -20,6 +21,7 @@ export class CreateVeterinarioDto {
     example: 962345678,
     description: 'Número de teléfono del veterinario o clínica veterinaria',
   })
+  @Type(() => Number)
   @IsInt()
   telefono: number;
 
@@ -39,6 +41,7 @@ export class UpdateVeterinarioDto {
     description: 'ID del veterinario a actualizar',
   })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   id_veterinario?: number;
 
@@ -63,6 +66,7 @@ export class UpdateVeterinarioDto {
     description: 'Teléfono actualizado del veterinario o clínica veterinaria',
   })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   telefono?: number;
 

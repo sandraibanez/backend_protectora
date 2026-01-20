@@ -2,17 +2,26 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, 
 import { VeterinarioService } from './veterinario.service';
 import { CreateVeterinarioDto, UpdateVeterinarioDto } from './veterinario.dto';
 import { AuthGuard } from 'src/authentication/guards/guard';
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@Controller('veterinarios')
+@ApiBearerAuth('access-token')
+@ApiTags('Veterinarios') 
+@Controller('veterinario')
 export class VeterinarioController {
   constructor(private readonly veterinarioService: VeterinarioService) {}
 
-  @Get()
+  @ApiOperation({ summary: 'Obtener todos los veterinarios (solo admin)'})
+  @ApiConsumes('application/x-www-form-urlencoded') 
+  @UseGuards(AuthGuard)
+  @Get("get")
   findAll() {
     return this.veterinarioService.findAll();
   }
 
-  @Get(':id')
+  @ApiOperation({ summary: 'Obtener un veterinario por ID (solo admin)' })
+  @ApiConsumes('application/x-www-form-urlencoded') 
+  @UseGuards(AuthGuard)
+  @Get('get-:id')
   getVeterinario(@Param('id') id: string) {
     const veterinarioId = parseInt(id);
     if (isNaN(veterinarioId)) {
@@ -21,8 +30,10 @@ export class VeterinarioController {
     return this.veterinarioService.getVeterinario(veterinarioId);
   }
 
+  @ApiOperation({ summary: 'Crear un nuevo veterinario (admin y veterinario)' }) 
+  @ApiConsumes('application/x-www-form-urlencoded') 
   @UseGuards(AuthGuard)
-  @Post()
+  @Post("post")
   createVeterinario(@Body() createVeterinarioDto: CreateVeterinarioDto, @Request() req) {
     let userCurrent = req.user.rol;
     if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
@@ -31,8 +42,10 @@ export class VeterinarioController {
     return this.veterinarioService.createVeterinario(createVeterinarioDto);
   }
 
+  @ApiOperation({ summary: 'Actualizar un veterinario por ID (admin y veterinario)'})
+  @ApiConsumes('application/x-www-form-urlencoded') 
   @UseGuards(AuthGuard)
-  @Put(':id')
+  @Put('put-:id')
   updateVeterinario(@Param('id') id: string, @Body() updateVeterinarioDto: UpdateVeterinarioDto, @Request() req) {
     let userCurrent = req.user.rol;
     if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
@@ -48,11 +61,13 @@ export class VeterinarioController {
     });
   }
 
+  @ApiOperation({ summary: 'Eliminar un veterinario por ID (admin)' })
+  @ApiConsumes('application/x-www-form-urlencoded') 
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete('delete-:id')
   deleteVeterinario(@Param('id') id: string, @Request() req) {
     let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
+    if (userCurrent !== 'admin') { 
       throw new HttpException('No tienes permisos para eliminar veterinarios', HttpStatus.FORBIDDEN);
     }
     const veterinarioId = parseInt(id);

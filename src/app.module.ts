@@ -33,6 +33,8 @@ import { AnimalEntidadModule } from './animal_entidad/animal_entidad.module';
 import { AnimalVeterinarioModule } from './animal_veterinario/animal_veterinario.module';
 import { AuthModule } from './authentication/auth/auth.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { ConsultaMedicacion } from './consulta_medicacion/consulta_medicacion.entity';
+import { ConsultaMedicacionModule } from './consulta_medicacion/consulta_medicacion.module';
 
 @Module({
   imports: [
@@ -48,7 +50,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
       username: 'root',
       password: '1234',
       database: "backend",
-      entities: [User, Animal, Entidad, Medicacion, Veterinario, Ingreso, Gasto, Protectora, Colonia, DonacionesViveres, RelacionPersonaAnimal, Animal_Entidad, AnimalVeterinario],
+      entities: [User, Animal, Entidad, Medicacion, Veterinario, Ingreso, Gasto, Protectora, Colonia, DonacionesViveres, RelacionPersonaAnimal, Animal_Entidad, AnimalVeterinario, ConsultaMedicacion],
       synchronize: false,
     }),
 
@@ -66,6 +68,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     AnimalEntidadModule,
     AnimalVeterinarioModule,
     AuthModule,
+    ConsultaMedicacionModule
   ],
 
   controllers: [AppController],
