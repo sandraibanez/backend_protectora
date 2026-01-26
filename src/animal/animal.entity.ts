@@ -5,6 +5,8 @@ import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
 import { AnimalVeterinario } from 'src/animal_veterinario/animal_veterinario.entity';
 import { Protectora } from 'src/protectora/protectora.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Acogida } from 'src/acogida/acogida.entity';
+import { Apadrinamiento } from 'src/apadrinamiento/apadrinamiento.entity';
 
 @Entity('animales') 
 export class Animal {
@@ -49,10 +51,18 @@ export class Animal {
   esterilizado: boolean;
 
   @ApiProperty({ type: () => Protectora, description: 'Protectora a la que pertenece el animal' })
-  @ManyToOne(() => Protectora, (protectora) => protectora.id_protectora)
+  @ManyToOne(() => Protectora, protectora => protectora.id_protectora)
   protectora: Protectora;
 
-  @OneToMany(() => AnimalVeterinario, (animalVeterinario) => animalVeterinario.animal)
+  @ApiProperty({ type: () => AnimalVeterinario, description: 'Relación animal-veterinario (consulta)' })
+  @OneToMany(() => AnimalVeterinario, animalVeterinario => animalVeterinario.animal)
   animalVeterinarios: AnimalVeterinario[];
+
+  @OneToMany(() => Acogida, acogida => acogida.animal)
+  acogidas: Acogida[];
+
+  @OneToMany(() => Apadrinamiento, apadrinamiento => apadrinamiento.animal)
+  apadrinamientos: Apadrinamiento[];
+
     
 }

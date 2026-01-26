@@ -36,7 +36,22 @@ export class AnimalService {
         return animal;
     }
 
-    async createAnimal(createAnimalDto: CreateAnimalDto): Promise<Animal> {
+    // Obtener todos los animales por protectora
+    async findByProtectora(idProtectora: number): Promise<Animal[]> {
+        // Validar protectora
+        const protectora = await this.protectoraRepository.findOneBy({ id_protectora: idProtectora});
+        if (!protectora) {
+            throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
+        }
+
+        return this.animalRepository.find({
+            where: { protectora: { id_protectora: idProtectora } },
+            relations: ['protectora'],
+            order: { id_animal: 'ASC' }
+        });
+    }
+
+    async createAnimal(idProtectora: number, createAnimalDto: CreateAnimalDto): Promise<Animal> {
 
         // Validar protectora
         const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createAnimalDto.protectora });
@@ -54,6 +69,8 @@ export class AnimalService {
         // Guardar y devolver
         return this.animalRepository.save(animal);
     }
+
+    
 
     async updateAnimal(id_animal: number, updateAnimalDto: UpdateAnimalDto): Promise<Animal> {
         // Buscar el animal existente con sus relaciones

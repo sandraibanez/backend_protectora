@@ -74,9 +74,9 @@ export class ConsultaMedicacionService {
     // -----------------------------------------------------
     // UPDATE
     // -----------------------------------------------------
-    async updateConsultaMedicacion(dto: UpdateConsultaMedicacionDto): Promise<ConsultaMedicacion> {
+    async updateConsultaMedicacion(id_consulta_medicacion: number, dto: UpdateConsultaMedicacionDto): Promise<ConsultaMedicacion> {
         const registro = await this.consultaMedicacionRepository.findOne({
-            where: { id_consulta_medicacion: dto.id_consulta_medicacion },
+            where: { id_consulta_medicacion: id_consulta_medicacion },
             relations: ['consulta', 'medicacion'],
         });
 

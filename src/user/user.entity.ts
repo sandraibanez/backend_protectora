@@ -1,10 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { RelacionPersonaAnimal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Protectora } from 'src/protectora/protectora.entity';
+import { Acogida } from 'src/acogida/acogida.entity';
+import { Apadrinamiento } from 'src/apadrinamiento/apadrinamiento.entity';
 
 export enum RolUsuario {
-  CLIENTE = 'cliente',
   ADMIN = 'admin',
+  TRABAJADOR = 'trabajador',
+  CLIENTE = 'cliente',
   VETERINARIO = 'veterinario',
 }
 
@@ -49,5 +53,16 @@ export class User {
     default: RolUsuario.CLIENTE,
   })
   rol: RolUsuario;
+
+  @ManyToOne(() => Protectora, protectora => protectora.trabajadores)
+  @JoinColumn({ name: 'id_protectora' })
+  protectora: Protectora;
+
+  @OneToMany(() => Acogida, acogida => acogida.usuario)
+  acogidas: Acogida[];
+
+  @OneToMany(() => Apadrinamiento, apadrinamiento => apadrinamiento.usuario)
+  apadrinamientos: Apadrinamiento[];
+
 
 }

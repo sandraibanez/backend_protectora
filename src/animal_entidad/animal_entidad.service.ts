@@ -19,9 +19,6 @@ export class AnimalEntidadService {
         private readonly entidadRepository: Repository<Entidad>,
     ) {}
 
-    findAll(): Promise<Animal_Entidad[]> {
-        return this.animalEntidadRepository.find({ relations: ['animal', 'entidad'] });
-    }
 
     async getAnimalEntidad(id_animal_entidad: number): Promise<Animal_Entidad> {
         const animalEntidad = await this.animalEntidadRepository.findOne({
@@ -32,6 +29,20 @@ export class AnimalEntidadService {
             throw new HttpException('Animal-Entidad no encontrada', HttpStatus.NOT_FOUND);
         }
         return animalEntidad;
+    }
+
+    async getRelacionesPorAnimal(idAnimal: number): Promise<Animal_Entidad[]> {
+        const relaciones = await this.animalEntidadRepository.find({
+            where: { animal: { id_animal: idAnimal } },
+            relations: ['animal', 'entidad'],
+            order: { fecha: 'DESC' }
+        });
+
+        if (!relaciones || relaciones.length === 0) {
+            throw new HttpException('Este animal no tiene relaciones registradas', HttpStatus.NOT_FOUND);
+        }
+
+        return relaciones;
     }
 
     async createAnimalEntidad(createAnimalEntidadDto: CreateAnimalEntidadDto): Promise<Animal_Entidad> {
@@ -55,9 +66,9 @@ export class AnimalEntidadService {
         return this.animalEntidadRepository.save(animalEntidad);
     }
 
-    async updateAnimalEntidad(updateAnimalEntidadDto: UpdateAnimalEntidadDto): Promise<Animal_Entidad> {
+    async updateAnimalEntidad(id_animalEnt: number, updateAnimalEntidadDto: UpdateAnimalEntidadDto): Promise<Animal_Entidad> {
         const animalEntidad = await this.animalEntidadRepository.findOne({
-            where: { id_animal_entidad: updateAnimalEntidadDto.id_animal_entidad },
+            where: { id_animal_entidad: id_animalEnt},
             relations: ['animal', 'entidad'],
         });
         if (!animalEntidad) {

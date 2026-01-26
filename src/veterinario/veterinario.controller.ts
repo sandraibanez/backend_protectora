@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, 
 import { VeterinarioService } from './veterinario.service';
 import { CreateVeterinarioDto, UpdateVeterinarioDto } from './veterinario.dto';
 import { AuthGuard } from 'src/authentication/guards/guard';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth('access-token')
 @ApiTags('Veterinarios') 
@@ -10,16 +10,14 @@ import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagg
 export class VeterinarioController {
   constructor(private readonly veterinarioService: VeterinarioService) {}
 
-  @ApiOperation({ summary: 'Obtener todos los veterinarios (solo admin)'})
-  @ApiConsumes('application/x-www-form-urlencoded') 
+  @ApiOperation({ summary: 'Obtener todos los veterinarios (solo admin)'}) 
   @UseGuards(AuthGuard)
   @Get("get")
   findAll() {
     return this.veterinarioService.findAll();
   }
 
-  @ApiOperation({ summary: 'Obtener un veterinario por ID (solo admin)' })
-  @ApiConsumes('application/x-www-form-urlencoded') 
+  @ApiOperation({ summary: 'Obtener un veterinario por ID (solo admin)' }) 
   @UseGuards(AuthGuard)
   @Get('get-:id')
   getVeterinario(@Param('id') id: string) {
@@ -30,8 +28,7 @@ export class VeterinarioController {
     return this.veterinarioService.getVeterinario(veterinarioId);
   }
 
-  @ApiOperation({ summary: 'Crear un nuevo veterinario (admin y veterinario)' }) 
-  @ApiConsumes('application/x-www-form-urlencoded') 
+  @ApiOperation({ summary: 'Crear un nuevo veterinario (admin y veterinario)' })  
   @UseGuards(AuthGuard)
   @Post("post")
   createVeterinario(@Body() createVeterinarioDto: CreateVeterinarioDto, @Request() req) {
@@ -42,8 +39,7 @@ export class VeterinarioController {
     return this.veterinarioService.createVeterinario(createVeterinarioDto);
   }
 
-  @ApiOperation({ summary: 'Actualizar un veterinario por ID (admin y veterinario)'})
-  @ApiConsumes('application/x-www-form-urlencoded') 
+  @ApiOperation({ summary: 'Actualizar un veterinario por ID (admin y veterinario)'}) 
   @UseGuards(AuthGuard)
   @Put('put-:id')
   updateVeterinario(@Param('id') id: string, @Body() updateVeterinarioDto: UpdateVeterinarioDto, @Request() req) {
@@ -61,8 +57,7 @@ export class VeterinarioController {
     });
   }
 
-  @ApiOperation({ summary: 'Eliminar un veterinario por ID (admin)' })
-  @ApiConsumes('application/x-www-form-urlencoded') 
+  @ApiOperation({ summary: 'Eliminar un veterinario por ID (admin)' }) 
   @UseGuards(AuthGuard)
   @Delete('delete-:id')
   deleteVeterinario(@Param('id') id: string, @Request() req) {

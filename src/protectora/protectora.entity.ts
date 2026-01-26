@@ -6,6 +6,7 @@ import { DonacionesViveres } from 'src/donaciones_viveres/donaciones_viveres.ent
 import { Gasto } from 'src/gasto/gasto.entity';
 import { Ingreso } from 'src/ingreso/ingreso.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/user/user.entity';
 
 @Entity('protectoras') 
 export class Protectora {
@@ -31,4 +32,8 @@ export class Protectora {
   })
   @ManyToMany(() => Veterinario, (veterinario) => veterinario.protectoras)
   veterinarios: Veterinario[];
+
+  @OneToMany(() => User, user => user.protectora)
+  trabajadores: User[];
+
 }

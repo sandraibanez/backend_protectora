@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { AdminUpdateUserDto, CreateUserDto, UpdatePasswordDto, UpdateUserDto } from './user.dto';
 import { AuthGuard } from 'src/authentication/guards/guard';
 import { log } from 'console';
-import { ApiTags, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth('access-token')
 @ApiTags('Users') 
@@ -14,8 +14,7 @@ export class UserController {
   ) { }
 
   // Admin pueda ver todos los usarios
-  @ApiOperation({ summary: 'Obtener todos los usuarios (solo admin)' }) 
-  @ApiConsumes('application/x-www-form-urlencoded') 
+  @ApiOperation({ summary: 'Obtener todos los usuarios (solo admin)' })  
   @UseGuards(AuthGuard)
   @Get("get")
   findAll(@Request() req) {
@@ -29,7 +28,6 @@ export class UserController {
 
   // Usuario pueda ver su información
   @ApiOperation({ summary: 'Obtener información del usuario logeado' }) 
-  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
   @Get('get-me')
   getMyUser(@Request() req) {
@@ -38,7 +36,6 @@ export class UserController {
   
   // Usuario admin o cliente pueda ver una parte de la informacion de un usuario en concreto
   @ApiOperation({ summary: 'Obtener información limitada de un usuario' }) 
-  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
   @Get('get-client/:id_user')
   getUserClient(@Param('id_user') id_user: number, @Request() req) {
@@ -57,7 +54,6 @@ export class UserController {
   
   // Registra un nuevo usuario (solo cliente??)
   @ApiOperation({ summary: 'Registrar un nuevo usuario' }) 
-  @ApiConsumes('application/x-www-form-urlencoded')
   @Post("post")
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
@@ -65,9 +61,8 @@ export class UserController {
 
   // Actualizar usuario
   @ApiOperation({ summary: 'Actualizar datos de un usuario (solo admin)' })
-  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
-  @Put('admin/:id_user')
+  @Put('put-admin/:id_user')
   @ApiBody({ type: AdminUpdateUserDto })
   updateUserAsAdmin( @Param('id_user') id_user: number, @Body() updateUserDto: AdminUpdateUserDto, @Request() req) {
     if (req.user.rol === 'admin') {
@@ -80,7 +75,6 @@ export class UserController {
 
   // Usuario puede actualizar su informacion
   @ApiOperation({ summary: 'Actualizar datos del usuario logeado' }) 
-  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
   @Put('put-me')
   updateMyUser(@Body() updateUserDto: UpdateUserDto, @Request() req) {
@@ -89,7 +83,6 @@ export class UserController {
 
   // usuario puede actualizar su contraseña
   @ApiOperation({ summary: 'Actualizar contraseña del usuario logeado' }) 
-  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
   @Put('put-me/password')
   updateMyPassword(@Body() body: UpdatePasswordDto, @Request() req) {
@@ -105,7 +98,6 @@ export class UserController {
 
   // el usuario tipo admin puede eliminar un usuario
   @ApiOperation({ summary: 'Eliminar un usuario (solo admin)' }) 
-  @ApiConsumes('application/x-www-form-urlencoded')
   @UseGuards(AuthGuard)
   @Delete('delete-:id_user')
   deleteUser(@Param('id_user') id_user: string, @Request() req) {

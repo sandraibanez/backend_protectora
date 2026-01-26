@@ -48,7 +48,6 @@ export class CreateAnimalDto {
 }
 
 export class UpdateAnimalDto {
-
   @ApiPropertyOptional({ example: 'Firulais', description: 'Nombre del animal'})
   @IsOptional()
   @IsString()

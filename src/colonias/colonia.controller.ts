@@ -2,19 +2,29 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, 
 import { ColoniaService } from './colonia.service';
 import { CreateColoniaDto, UpdateColoniaDto } from './colonia.dto';
 import { AuthGuard } from 'src/authentication/guards/guard';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
+@ApiTags('Animal-Veterinario') 
 @Controller('colonias')
 export class ColoniaController {
-
   constructor(private readonly coloniaService: ColoniaService) {}
 
-  @Get()
-  findAll() {
+  @ApiOperation({ summary: '' })
+  @UseGuards(AuthGuard)
+  @Get("get")
+  findAll(@Request() req) {
     return this.coloniaService.findAll();
   }
 
-  @Get(':id')
-  getColonia(@Param('id') id: string) {
+  // Falta get con informacion limitada
+
+  // Falta get decolonias por protectora
+
+  @ApiOperation({ summary: '' })
+  @UseGuards(AuthGuard)
+  @Get('get/:id')
+  getColonia(@Param('id') id: string, @Request() req) {
     const coloniaId = parseInt(id);
     if (isNaN(coloniaId)) {
       throw new HttpException('Invalid colonia ID', HttpStatus.BAD_REQUEST);
@@ -22,8 +32,9 @@ export class ColoniaController {
     return this.coloniaService.getColonia(coloniaId);
   }
 
+  @ApiOperation({ summary: '' })
   @UseGuards(AuthGuard)
-  @Post()
+  @Post("post")
   createColonia(@Body() createColoniaDto: CreateColoniaDto, @Request() req) {
   let userCurrent = req.user.rol;
     if (userCurrent !== 'admin') { 
@@ -32,8 +43,9 @@ export class ColoniaController {
     return this.coloniaService.createColonia(createColoniaDto);
   }
 
-  @UseGuards(AuthGuard)
-  @Put(':id')
+  @ApiOperation({ summary: '' })
+  @UseGuards(AuthGuard)  
+  @Put('put/:id')
   updateColonia(@Param('id') id: string, @Body() updateColoniaDto: UpdateColoniaDto, @Request() req) {
     let userCurrent = req.user.rol;
     if (userCurrent !== 'admin') { 
@@ -43,14 +55,14 @@ export class ColoniaController {
     if (isNaN(coloniaId)) {
       throw new HttpException('Invalid colonia ID', HttpStatus.BAD_REQUEST);
     }
-    return this.coloniaService.updateColonia({
-      ...updateColoniaDto,
-      id_colonia: coloniaId,
-    });
+    return this.coloniaService.updateColonia(
+      coloniaId, updateColoniaDto,
+    );
   }
   
+  @ApiOperation({ summary: '' })
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete('delete/:id')
   deleteColonia(@Param('id') id: string, @Request() req) {
     let userCurrent = req.user.rol;
     if (userCurrent !== 'admin') { 

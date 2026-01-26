@@ -19,7 +19,12 @@ export class AuthService { constructor( private jwtService: JwtService, @InjectR
         if (!passwordMatch) {
             throw new UnauthorizedException();
         }
-        const payload = { rol: user.rol, nombre: user.nombre, id_user: user.id_user };
+        const payload = {
+          id: user.id_user,
+          rol: user.rol,
+          id_protectora: user.protectora.id_protectora ?? null
+        };
+
         return {
             access_token: await this.jwtService.signAsync(payload),
         };

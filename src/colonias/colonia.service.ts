@@ -49,9 +49,9 @@ export class ColoniaService {
         return this.coloniaRepository.save(colonia);
     }
 
-    async updateColonia(updateColoniaDto: UpdateColoniaDto): Promise<Colonia> {
+    async updateColonia(id_colonia: number, updateColoniaDto: UpdateColoniaDto): Promise<Colonia> {
         const colonia = await this.coloniaRepository.findOne({
-            where: { id_colonia: updateColoniaDto.id_colonia },
+            where: { id_colonia: id_colonia },
             relations: ['protectora'],
         });
 
@@ -75,6 +75,7 @@ export class ColoniaService {
             horario_alimento: updateColoniaDto.horario_alimento,
             cantidad_comida: updateColoniaDto.cantidad_comida,
         };
+        
         this.coloniaRepository.merge(colonia, camposSimples);
 
         return this.coloniaRepository.save(colonia);

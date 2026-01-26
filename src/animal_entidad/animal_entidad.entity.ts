@@ -26,4 +26,6 @@ export class Animal_Entidad {
     @ManyToOne(() => Entidad, (entidad) => entidad.id, { eager: true })
     @JoinColumn({ name: 'entidad' })
     entidad: Entidad;
+    
+    // Faltaria una foto
 }

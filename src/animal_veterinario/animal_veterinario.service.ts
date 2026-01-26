@@ -21,7 +21,7 @@ export class AnimalVeterinarioService {
 
     // Obtener todos los registros
     findAll(): Promise<AnimalVeterinario[]> {
-        return this.animalVeterinarioRepository.find({ relations: ['animal', 'veterinario'] });
+        return this.animalVeterinarioRepository.find({ relations: ['animal', 'veterinario', 'consultaMedicaciones'] });
     }
 
     // Devuelve todas las visitas de un animal
@@ -32,22 +32,38 @@ export class AnimalVeterinarioService {
         }
         return this.animalVeterinarioRepository.find({
             where: { animal: { id_animal } },
-            relations: ['animal', 'veterinario'],
+            relations: ['animal', 'veterinario', 'consultaMedicaciones'],
+        });
+    }
+
+    // Devuelve todas las consultas de un veterinario
+    async getConsultasPorVeterinario(id_veterinario: number): Promise<AnimalVeterinario[]> {
+        const existeAnimal = await this.veterinarioRepository.findOneBy({ id_veterinario });
+        if (!existeAnimal) {
+            throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
+        }
+
+        return this.animalVeterinarioRepository.find({
+            where: { veterinario: { id_veterinario: id_veterinario } },
+            relations: ['animal', 'veterinario', 'consultaMedicaciones'],
+            order: { fecha: 'DESC' }
         });
     }
 
 
     // Obtener un registro por ID
-    async getAnimalVeterinario(id_animalVeterinario: number): Promise<AnimalVeterinario> {
+    async getConsultasPorAnimal(idAnimal: number): Promise<AnimalVeterinario> {
         const animalVeterinario = await this.animalVeterinarioRepository.findOne({
-            where: { id_animalVeterinario },
-            relations: ['animal', 'veterinario'],
+            where: { animal: { id_animal: idAnimal } },
+            relations: ['animal', 'veterinario', 'consultaMedicaciones'],
+            order: { fecha: 'DESC' }
         });
         if (!animalVeterinario) {
             throw new HttpException('Animal-Veterinario no encontrado', HttpStatus.NOT_FOUND);
         }
         return animalVeterinario;
     }
+
 
     // Crear un nuevo registro
     async createAnimalVeterinario(createAnimalVeterinarioDto: CreateAnimalVeterinarioDto): Promise<AnimalVeterinario> {
@@ -72,10 +88,10 @@ export class AnimalVeterinarioService {
     }
 
     // Actualizar un registro 
-    async updateAnimalVeterinario(updateAnimalVeterinarioDto: UpdateAnimalVeterinarioDto): Promise<AnimalVeterinario> {
+    async updateAnimalVeterinario(id_animalVeterinario: number, updateAnimalVeterinarioDto: UpdateAnimalVeterinarioDto): Promise<AnimalVeterinario> {
         const animalVeterinario = await this.animalVeterinarioRepository.findOne({
-            where: { id_animalVeterinario: updateAnimalVeterinarioDto.id_animalVeterinario },
-            relations: ['animal', 'veterinario'],
+            where: { id_animalVeterinario: id_animalVeterinario },
+            relations: ['animal', 'veterinario', 'consultaMedicaciones'],
         });
         if (!animalVeterinario) {
             throw new HttpException('Animal-Veterinario no encontrado', HttpStatus.NOT_FOUND);

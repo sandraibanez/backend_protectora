@@ -7,8 +7,9 @@ import { AuthGuard } from 'src/authentication/guards/guard';
 export class ConsultaMedicacionController {
   constructor(private readonly consultaMedicacionService: ConsultaMedicacionService) {}
 
+  // Investigar ley de proteccion animal
   @UseGuards(AuthGuard)
-  @Get()
+  @Get("get")
   findAll(@Request() req) {
     const userCurrent = req.user.rol;
     if (userCurrent !== 'admin' && userCurrent !== 'veterinario') {
@@ -17,9 +18,8 @@ export class ConsultaMedicacionController {
     return this.consultaMedicacionService.findAll();
   }
 
-
   @UseGuards(AuthGuard)
-  @Get(':id')
+  @Get('get/:id')
   getConsultaMedicacion(@Param('id') id: string, @Request() req) {
     const userCurrent = req.user.rol;
     if (userCurrent !== 'admin' && userCurrent !== 'veterinario') {
@@ -35,20 +35,20 @@ export class ConsultaMedicacionController {
   }
 
   @UseGuards(AuthGuard)
-  @Post()
-  createConsultaMedicacion(@Body() dto: CreateConsultaMedicacionDto, @Request() req) {
+  @Post("post")
+  createConsultaMedicacion(@Body() updateConsultaMedicacionDto: CreateConsultaMedicacionDto, @Request() req) {
     const userCurrent = req.user.rol;
     if (userCurrent !== 'admin' && userCurrent !== 'veterinario') {
       throw new HttpException('No tienes permisos para registrar medicación en una consulta', HttpStatus.FORBIDDEN);
     }
 
-    return this.consultaMedicacionService.createConsultaMedicacion(dto);
+    return this.consultaMedicacionService.createConsultaMedicacion(updateConsultaMedicacionDto);
   }
 
 
   @UseGuards(AuthGuard)
-  @Put(':id')
-  updateConsultaMedicacion(@Param('id') id: string, @Body() dto: UpdateConsultaMedicacionDto, @Request() req) {
+  @Put('put/:id')
+  updateConsultaMedicacion(@Param('id') id: string, @Body() updateConsultaMedicacionDto: UpdateConsultaMedicacionDto, @Request() req) {
     const userCurrent = req.user.rol;
     if (userCurrent !== 'admin' && userCurrent !== 'veterinario') {
       throw new HttpException('No tienes permisos para actualizar administraciones de medicación', HttpStatus.FORBIDDEN);
@@ -59,15 +59,14 @@ export class ConsultaMedicacionController {
       throw new HttpException('Invalid ConsultaMedicacion ID', HttpStatus.BAD_REQUEST);
     }
 
-    return this.consultaMedicacionService.updateConsultaMedicacion({
-      ...dto,
-      id_consulta_medicacion: consultaMedicacionId,
-    });
+    return this.consultaMedicacionService.updateConsultaMedicacion(
+      consultaMedicacionId, updateConsultaMedicacionDto
+    );
   }
 
 
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete('delete/:id')
   deleteConsultaMedicacion(@Param('id') id: string, @Request() req) {
     const userCurrent = req.user.rol;
     if (userCurrent !== 'admin' && userCurrent !== 'veterinario') {
