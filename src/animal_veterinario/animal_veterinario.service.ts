@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { AnimalVeterinario } from './animal_veterinario.entity';
 import { CreateAnimalVeterinarioDto, UpdateAnimalVeterinarioDto } from './animal_veterinario.dto';
 import { Animal } from 'src/animal/animal.entity';
-import { Veterinario } from 'src/veterinario/veterinario.entity';
+import { RolUsuario, User } from 'src/user/user.entity';
 
 @Injectable()
 export class AnimalVeterinarioService {
@@ -15,8 +15,9 @@ export class AnimalVeterinarioService {
         @InjectRepository(Animal)
         private readonly animalRepository: Repository<Animal>,
 
-        @InjectRepository(Veterinario)
-        private readonly veterinarioRepository: Repository<Veterinario>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
     ) {}
 
     // Obtener todos los registros
@@ -38,13 +39,16 @@ export class AnimalVeterinarioService {
 
     // Devuelve todas las consultas de un veterinario
     async getConsultasPorVeterinario(id_veterinario: number): Promise<AnimalVeterinario[]> {
-        const existeAnimal = await this.veterinarioRepository.findOneBy({ id_veterinario });
-        if (!existeAnimal) {
-            throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
+        const veterinario = await this.userRepository.findOne({ 
+            where: { id_user: id_veterinario, rol: RolUsuario.VETERINARIO },
+        });
+        
+        if (!veterinario) { 
+            throw new HttpException('Veterinario no encontrado', HttpStatus.NOT_FOUND); 
         }
 
         return this.animalVeterinarioRepository.find({
-            where: { veterinario: { id_veterinario: id_veterinario } },
+            where: { veterinario: { id_user: id_veterinario } },
             relations: ['animal', 'veterinario', 'consultaMedicaciones'],
             order: { fecha: 'DESC' }
         });
@@ -68,15 +72,32 @@ export class AnimalVeterinarioService {
     // Crear un nuevo registro
     async createAnimalVeterinario(createAnimalVeterinarioDto: CreateAnimalVeterinarioDto): Promise<AnimalVeterinario> {
         
-        const animal = await this.animalRepository.findOneBy({ id_animal: createAnimalVeterinarioDto.animal });
-        if (!animal) {
+        const animal = await this.animalRepository.findOne({
+            where: { id_animal: createAnimalVeterinarioDto.animal },
+            relations: ['protectora']
+        });
+
+    if (!animal) {
             throw new HttpException('Animal no encontrado', HttpStatus.BAD_REQUEST);
         }
 
-        const veterinario = await this.veterinarioRepository.findOneBy({ id_veterinario: createAnimalVeterinarioDto.veterinario });
+        const veterinario = await this.userRepository.findOne({
+            where: { id_user: createAnimalVeterinarioDto.veterinario, rol: RolUsuario.VETERINARIO },
+            relations: ['protectora']
+        });
+
+
         if (!veterinario) {
             throw new HttpException('Veterinario no encontrado', HttpStatus.BAD_REQUEST);
         }
+
+        if (animal.protectora.id_protectora !== veterinario.protectora.id_protectora) {
+            throw new HttpException(
+                'El veterinario no pertenece a la misma protectora que el animal',
+                HttpStatus.FORBIDDEN
+            );
+        }
+
 
         const animalVeterinario = this.animalVeterinarioRepository.create({
             ...createAnimalVeterinarioDto,
@@ -98,19 +119,35 @@ export class AnimalVeterinarioService {
         }
 
         if (updateAnimalVeterinarioDto.animal !== undefined) {
-            const animal = await this.animalRepository.findOneBy({ id_animal: updateAnimalVeterinarioDto.animal });
+            const animal = await this.animalRepository.findOne({
+                where: { id_animal: updateAnimalVeterinarioDto.animal },
+                relations: ['protectora']
+            });
+
             if (!animal) {
                 throw new HttpException('Animal no encontrado', HttpStatus.BAD_REQUEST)
             };
+
+            if (animal.protectora.id_protectora !== animalVeterinario.veterinario.protectora.id_protectora) { 
+                throw new HttpException( 'El animal pertenece a otra protectora', HttpStatus.FORBIDDEN ); 
+            }
             animalVeterinario.animal = animal;
         }
 
-        if (updateAnimalVeterinarioDto.veterinario !== undefined) {
-            const veterinario = await this.veterinarioRepository.findOneBy({ id_veterinario: updateAnimalVeterinarioDto.veterinario });
-            if (!veterinario) {
-                throw new HttpException('Veterinario no encontrado', HttpStatus.BAD_REQUEST)
-            };
-            animalVeterinario.veterinario = veterinario;
+        if (updateAnimalVeterinarioDto.veterinario !== undefined) { 
+            const veterinario = await this.userRepository.findOne({
+                where: { id_user: updateAnimalVeterinarioDto.veterinario, rol: RolUsuario.VETERINARIO },
+                relations: ['protectora']
+            });
+
+            if (!veterinario) { 
+                throw new HttpException('Veterinario no encontrado', HttpStatus.BAD_REQUEST); 
+            } 
+
+            if (veterinario.protectora.id_protectora !== animalVeterinario.animal.protectora.id_protectora) { 
+                throw new HttpException( 'El veterinario no pertenece a la misma protectora que el animal', HttpStatus.FORBIDDEN ); 
+            }
+            animalVeterinario.veterinario = veterinario; 
         }
 
         // Merge de los campos simples

@@ -33,6 +33,14 @@ export class CreateUserDto {
   @ApiProperty({ enum: RolUsuario, example: RolUsuario.CLIENTE, description: 'Rol del usuario' })
   @IsEnum(RolUsuario)
   rol: RolUsuario;
+
+  @ApiProperty({ example: 3, description: 'ID de la protectora a la que pertenece el usuario' })
+  @Type(() => Number)
+  @IsInt()
+  protectora: number;
+
+  
+
 }
 
 export class AdminUpdateUserDto {

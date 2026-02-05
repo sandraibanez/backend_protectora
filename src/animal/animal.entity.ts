@@ -7,6 +7,7 @@ import { Protectora } from 'src/protectora/protectora.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Acogida } from 'src/acogida/acogida.entity';
 import { Apadrinamiento } from 'src/apadrinamiento/apadrinamiento.entity';
+import { Colonia } from 'src/colonias/colonia.entity';
 
 @Entity('animales') 
 export class Animal {
@@ -50,6 +51,10 @@ export class Animal {
   @Column({ default: false })
   esterilizado: boolean;
 
+  @ApiProperty({ example: true, description: 'Si el animal es adoptable' })
+  @Column({ default: false })
+  adoptable: boolean;
+
   @ApiProperty({ type: () => Protectora, description: 'Protectora a la que pertenece el animal' })
   @ManyToOne(() => Protectora, protectora => protectora.id_protectora)
   protectora: Protectora;
@@ -63,6 +68,10 @@ export class Animal {
 
   @OneToMany(() => Apadrinamiento, apadrinamiento => apadrinamiento.animal)
   apadrinamientos: Apadrinamiento[];
+
+  @ManyToOne(() => Colonia, (colonia) => colonia.animales, { nullable: true })
+  @JoinColumn({ name: 'id_colonia' })
+  colonia: Colonia;
 
     
 }

@@ -19,10 +19,6 @@ export class CreateColoniaDto {
   @IsDateString()
   horario_alimento: Date;
 
-  @ApiProperty({ example: 1, description: 'Cantidad de comida proporcionada' })
-  @IsInt()
-  cantidad_comida: number;
-
   @ApiProperty({ example: 1, description: 'ID de la protectora asociada', required: false })
   @IsOptional()
   @IsInt()
@@ -50,11 +46,6 @@ export class UpdateColoniaDto {
   @IsOptional()
   @IsDateString()
   horario_alimento?: Date;
-
-  @ApiPropertyOptional({ example: 1, description: 'Cantidad de comida proporcionada', required: false })
-  @IsOptional()
-  @IsInt()
-  cantidad_comida?: number;
 
   @ApiPropertyOptional({ example: 1, description: 'ID de la protectora asociada', required: false })
   @IsOptional()

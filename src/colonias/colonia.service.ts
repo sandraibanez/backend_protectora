@@ -4,6 +4,7 @@ import { Colonia } from './colonia.entity';
 import { Repository } from 'typeorm';
 import { CreateColoniaDto, UpdateColoniaDto } from './colonia.dto';
 import { Protectora } from 'src/protectora/protectora.entity';
+import { Animal } from 'src/animal/animal.entity';
 
 @Injectable()
 export class ColoniaService {
@@ -13,6 +14,9 @@ export class ColoniaService {
 
         @InjectRepository(Protectora)
         private readonly protectoraRepository: Repository<Protectora>,
+
+        @InjectRepository(Animal)
+        private readonly animalRepository: Repository<Animal>,
     ) {}
 
     findAll(): Promise<Colonia[]> {
@@ -20,6 +24,26 @@ export class ColoniaService {
             relations: ['protectora'], 
         });
     }
+
+    async findLimitedByProtectora(idProtectora: number) {
+        return this.coloniaRepository.find({
+            where: { protectora: { id_protectora: idProtectora } },
+            select: ['id_colonia', 'localizacion', 'foto', 'conteo_gatos'],
+            relations: ['protectora'],
+        });
+    }
+
+    async findLimitedByProtectoraAndId(idProtectora: number, idColonia: number) {
+        return this.coloniaRepository.findOne({
+            where: {
+            id_colonia: idColonia,
+            protectora: { id_protectora: idProtectora },
+            },
+            select: ['id_colonia', 'localizacion', 'foto', 'conteo_gatos'],
+            relations: ['protectora'],
+        });
+    }
+
 
     async getColonia(id_colonia: number): Promise<Colonia> {
         const colonia = await this.coloniaRepository.findOne({
@@ -72,13 +96,46 @@ export class ColoniaService {
             localizacion: updateColoniaDto.localizacion,
             conteo_gatos: updateColoniaDto.conteo_gatos,
             foto: updateColoniaDto.foto,
-            horario_alimento: updateColoniaDto.horario_alimento,
-            cantidad_comida: updateColoniaDto.cantidad_comida,
+            horario_alimento: updateColoniaDto.horario_alimento
         };
         
         this.coloniaRepository.merge(colonia, camposSimples);
 
         return this.coloniaRepository.save(colonia);
+    }
+
+    // Asignar animal a una colonia 
+    async asignarAnimal(idColonia: number, idAnimal: number): Promise<Animal> { 
+        const colonia = await this.coloniaRepository.findOne({ 
+            where: { id_colonia: idColonia }, relations: ['protectora'], 
+        }); 
+        if (!colonia) { 
+            throw new HttpException('Colonia no encontrada', HttpStatus.NOT_FOUND); 
+        } 
+        const animal = await this.animalRepository.findOne({ 
+            where: { id_animal: idAnimal }, 
+            relations: ['protectora'], 
+        }); 
+        if (!animal) { 
+            throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND); 
+        } 
+        // Asignar colonia al animal 
+        animal.colonia = colonia; 
+        return this.animalRepository.save(animal); 
+    }
+
+    // Contar animales castrados en una colonia 
+    async contarCastrados(idColonia: number): Promise<number> { 
+        const colonia = await this.coloniaRepository.findOne({ 
+            where: { id_colonia: idColonia }, 
+        }); 
+        if (!colonia) { 
+            throw new HttpException('Colonia no encontrada', HttpStatus.NOT_FOUND); 
+        } 
+        const count = await this.animalRepository.count({ 
+            where: { colonia: { id_colonia: idColonia }, esterilizado: true, }, 
+        }); 
+        return count; 
     }
 
 

@@ -60,26 +60,45 @@ export class UserService {
   // Crear un nuevo usuario
   async createUser(createUserDto: CreateUserDto): Promise<User> {
 
-    // Verificar si el email ya está registrado
+    // Verificar si el email ya está registrado en ESTA protectora
     const existeUser = await this.userRepository.findOne({
-      where: { email: createUserDto.email },
+      where: {
+        email: createUserDto.email,
+        protectora: { id_protectora: createUserDto.protectora }
+      },
+      relations: ['protectora']
     });
+
     if (existeUser) {
-      throw new HttpException('El email ya está registrado', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'El email ya está registrado en esta protectora',
+        HttpStatus.BAD_REQUEST
+      );
     }
 
-    const newUser = this.userRepository.create(createUserDto);
+    // Crear usuario SIN la protectora (porque es un number) 
+    const { protectora, ...resto } = createUserDto; 
+    const newUser = this.userRepository.create(resto);
+
+    // Asignar la protectora como relación ManyToOne
+    newUser.protectora = { id_protectora: protectora } as any;
 
     // Hashear la contraseña
-    const saltOrRounds = 10; 
+    const saltOrRounds = 10;
     newUser.contrasenya = await bcrypt.hash(createUserDto.contrasenya, saltOrRounds);
 
     return this.userRepository.save(newUser);
   }
 
+
+
   // Actualizar un usuario existente
   async updateUser(id_user: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id_user });
+    const user = await this.userRepository.findOne({
+      where: { id_user },
+      relations: ['protectora']
+    });
+
 
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
@@ -95,15 +114,21 @@ export class UserService {
     // Evitar duplicar email de otro usuario
     if (updateUserDto.email && updateUserDto.email !== user.email) {
       const existingEmail = await this.userRepository.findOne({
-        where: { email: updateUserDto.email },
+        where: {
+          email: updateUserDto.email,
+          protectora: { id_protectora: user.protectora.id_protectora }
+        },
+        relations: ['protectora']
       });
+
       if (existingEmail) {
         throw new HttpException(
-          'El email ya está registrado por otro usuario',
+          'El email ya está registrado en esta protectora',
           HttpStatus.BAD_REQUEST,
         );
       }
     }
+
 
     this.userRepository.merge(user, updateUserDto);
     return this.userRepository.save(user);
@@ -111,7 +136,10 @@ export class UserService {
 
   // Actualizar un usuario existente
   async adminUpdateUser(id_user: number, updateUserDto: AdminUpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id_user });
+    const user = await this.userRepository.findOne({
+      where: { id_user },
+      relations: ['protectora']
+    });
 
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
@@ -127,11 +155,16 @@ export class UserService {
     // Evitar duplicar email de otro usuario
     if (updateUserDto.email && updateUserDto.email !== user.email) {
       const existingEmail = await this.userRepository.findOne({
-        where: { email: updateUserDto.email },
+        where: {
+          email: updateUserDto.email,
+          protectora: { id_protectora: user.protectora.id_protectora }
+        },
+        relations: ['protectora']
       });
+
       if (existingEmail) {
         throw new HttpException(
-          'El email ya está registrado por otro usuario',
+          'El email ya está registrado en esta protectora',
           HttpStatus.BAD_REQUEST,
         );
       }

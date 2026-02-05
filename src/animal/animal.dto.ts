@@ -40,10 +40,15 @@ export class CreateAnimalDto {
   @IsBoolean()
   esterilizado: boolean;
 
+  @ApiProperty({ example: true, description: 'Indica si el animal es adoptable' })
+  @Type(() => Boolean)
+  @IsBoolean()
+  adoptable: boolean;
+
   @ApiProperty({ example: 1, description: 'ID de la protectora a la que pertenece el animal' })
   @Type(() => Number)
   @IsInt()
-  protectora?: number;
+  protectora: number;
 
 }
 
@@ -93,6 +98,12 @@ export class UpdateAnimalDto {
   @Type(() => Boolean)
   @IsBoolean()
   esterilizado?: boolean;
+
+  @ApiPropertyOptional({ example: true, description: 'Indica si el animal es adoptable' })
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  adoptable?: boolean;
 
   @ApiPropertyOptional({ example: 1, description: 'ID protectora'})
   @IsOptional()

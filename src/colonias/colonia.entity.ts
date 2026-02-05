@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Protectora } from '../protectora/protectora.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Animal } from 'src/animal/animal.entity';
 
 @Entity('colonias') 
 export class Colonia {
@@ -20,10 +21,6 @@ export class Colonia {
     @Column({ type: 'date' })
     horario_alimento: Date;
 
-    @ApiProperty({ example: 1, description: 'Cantidad de comida que se ha llevado a la colonia' })
-    @Column()
-    cantidad_comida: number;
-
     @ApiProperty({ example: 'gato.png', description: 'Foto del estado de la colonia' })
     @Column({nullable: true })
     foto: string;
@@ -31,5 +28,9 @@ export class Colonia {
     @ApiProperty({ type: () => Protectora, description: 'Relaciones con protectora' })
     @ManyToOne(() => Protectora, (protectora) => protectora.id_protectora)
     protectora: Protectora;
+
+    @OneToMany(() => Animal, (animal) => animal.colonia)
+    animales: Animal[];
+
 
 }

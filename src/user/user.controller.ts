@@ -65,7 +65,7 @@ export class UserController {
   @Put('put-admin/:id_user')
   @ApiBody({ type: AdminUpdateUserDto })
   updateUserAsAdmin( @Param('id_user') id_user: number, @Body() updateUserDto: AdminUpdateUserDto, @Request() req) {
-    if (req.user.rol === 'admin') {
+    if (req.user.rol !== 'admin') {
       throw new HttpException('No tienes permisos', HttpStatus.FORBIDDEN);
     }
 

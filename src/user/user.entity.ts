@@ -1,9 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { RelacionPersonaAnimal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Protectora } from 'src/protectora/protectora.entity';
 import { Acogida } from 'src/acogida/acogida.entity';
 import { Apadrinamiento } from 'src/apadrinamiento/apadrinamiento.entity';
+import { AnimalVeterinario } from 'src/animal_veterinario/animal_veterinario.entity';
 
 export enum RolUsuario {
   ADMIN = 'admin',
@@ -11,7 +12,7 @@ export enum RolUsuario {
   CLIENTE = 'cliente',
   VETERINARIO = 'veterinario',
 }
-
+@Index(['email', 'protectora'], { unique: true })
 @Entity('Users')
 export class User {
   @ApiProperty({ example: 1, description: 'ID único del usuario' })
@@ -31,7 +32,7 @@ export class User {
   direccion: string;
 
   @ApiProperty({ example: 'miriam@example.com', description: 'Correo electrónico del usuario' })
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @ApiProperty({ example: 600123456, description: 'Número de teléfono del usuario' })
@@ -57,6 +58,10 @@ export class User {
   @ManyToOne(() => Protectora, protectora => protectora.trabajadores)
   @JoinColumn({ name: 'id_protectora' })
   protectora: Protectora;
+
+  @OneToMany(() => AnimalVeterinario, av => av.veterinario)
+  animalVeterinarios: AnimalVeterinario[];
+
 
   @OneToMany(() => Acogida, acogida => acogida.usuario)
   acogidas: Acogida[];
