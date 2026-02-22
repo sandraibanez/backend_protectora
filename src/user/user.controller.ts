@@ -18,12 +18,11 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Get("get")
   findAll(@Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent === "admin") {
-      return this.userService.findAll();
-    } else {
+    const user = req.user;
+    if (user.rol !== 'admin') {
       throw new HttpException('No tienes permisos para ver la informacion de los usuarios', HttpStatus.FORBIDDEN);
     }
+    return this.userService.findAll();
   }
 
   // Usuario pueda ver su información
@@ -101,15 +100,15 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Delete('delete-:id_user')
   deleteUser(@Param('id_user') id_user: string, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent === "admin") {
-      const userId = parseInt(id_user);
-      if (isNaN(userId)) {
-        throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
-      }
-      return this.userService.deleteUser(userId);
-    } else {
+    const user = req.user;
+    if (user.rol !== 'admin') {
       throw new HttpException('No tienes permisos para eliminar usuarios', HttpStatus.FORBIDDEN);
     }
+    
+    const userId = parseInt(id_user);
+    if (isNaN(userId)) {
+      throw new HttpException('ID de usuario inválido', HttpStatus.BAD_REQUEST);
+    }
+    return this.userService.deleteUser(userId);
   }
 }

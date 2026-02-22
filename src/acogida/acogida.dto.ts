@@ -34,7 +34,7 @@ export class CreateAcogidaDto {
 
   @ApiProperty({ example: 5, description: 'ID del usuario que solicita la acogida' })
   @IsInt()
-  id_usuario: number;
+  id_user: number;
 }
 
 export class UpdateAcogidaDto {
@@ -71,5 +71,5 @@ export class UpdateAcogidaDto {
   @ApiPropertyOptional({ example: 5, description: 'ID del usuario' })
   @IsOptional()
   @IsInt()
-  id_usuario?: number;
+  id_user?: number;
 }

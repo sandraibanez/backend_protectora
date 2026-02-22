@@ -22,6 +22,6 @@ export class Ingreso {
 
   @ApiProperty({ type: () => Protectora, description: 'Protectora asociada a este ingreso' })
   @ManyToOne(() => Protectora, (protectora) => protectora.id_protectora, { eager: true })
-  @JoinColumn({ name: 'protectoraId' })
+  @JoinColumn({ name: 'protectora' })
   protectora: Protectora;
 }

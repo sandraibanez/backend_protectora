@@ -36,6 +36,6 @@ export class Acogida {
   animal: Animal;
 
   @ManyToOne(() => User, user => user.acogidas)
-  @JoinColumn({ name: 'id_usuario' })
+  @JoinColumn({ name: 'id_user' })
   usuario: User;
 }

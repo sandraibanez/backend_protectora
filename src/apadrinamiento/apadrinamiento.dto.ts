@@ -22,7 +22,7 @@ export class CreateApadrinamientoDto {
 
   @ApiProperty({ example: 5, description: 'ID del usuario que apadrina' })
   @IsInt()
-  id_usuario: number;
+  id_user: number;
 }
 
 export class UpdateApadrinamientoDto {
@@ -50,5 +50,5 @@ export class UpdateApadrinamientoDto {
   @ApiPropertyOptional({ example: 5, description: 'ID del usuario' })
   @IsOptional()
   @IsInt()
-  id_usuario?: number;
+  id_user?: number;
 }

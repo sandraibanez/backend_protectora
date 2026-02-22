@@ -22,7 +22,10 @@ export class UserService {
 
   // Obtener un usuario por ID
   async getUser(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id_user: id });
+    const user = await this.userRepository.findOne({
+      where: { id_user: id },
+      relations: ['protectora'],
+    });
     if (!user) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }

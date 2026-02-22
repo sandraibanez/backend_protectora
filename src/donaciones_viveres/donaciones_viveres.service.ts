@@ -21,6 +21,19 @@ export class DonacionesViveresService {
         });
     }
 
+    async findByProtectora(id_protectora: number): Promise<DonacionesViveres[]> {
+        const protectora = await this.protectoraRepository.findOneBy({ id_protectora });
+        if (!protectora) {
+            throw new HttpException('Protectora no encontrada', HttpStatus.NOT_FOUND);
+        }
+
+        return this.donacionesRepository.find({
+            where: { protectora: { id_protectora } },
+            relations: ['protectora'],
+            order: { fecha: 'DESC' }
+        });
+    }
+
     async getDonacionesViveres(id_donacion: number): Promise<DonacionesViveres> {
         const donacion = await this.donacionesRepository.findOne({
             where: { id_donacion },

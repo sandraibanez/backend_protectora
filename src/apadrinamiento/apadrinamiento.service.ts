@@ -27,7 +27,7 @@ export class ApadrinamientoService {
       throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_usuario } });
+    const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_user } });
     if (!usuario) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }
@@ -36,7 +36,7 @@ export class ApadrinamientoService {
     const yaApadrinado = await this.apadrinamientoRepository.findOne({
       where: {
         animal: { id_animal: dto.id_animal },
-        usuario: { id_user: dto.id_usuario },
+        usuario: { id_user: dto.id_user },
         activo: true,
       },
     });
@@ -82,9 +82,9 @@ export class ApadrinamientoService {
   }
 
   // Obtener todos los apadrinamientos realizados por un usuario
-  async findByUsuario(idUsuario: number): Promise<Apadrinamiento[]> {
+  async findByUsuario(id_user: number): Promise<Apadrinamiento[]> {
     const usuario = await this.userRepository.findOne({
-      where: { id_user: idUsuario },
+      where: { id_user: id_user },
     });
 
     if (!usuario) {
@@ -92,7 +92,7 @@ export class ApadrinamientoService {
     }
 
     return this.apadrinamientoRepository.find({
-      where: { usuario: { id_user: idUsuario } },
+      where: { usuario: { id_user: id_user } },
       relations: ['animal', 'usuario'],
       order: { fecha_inicio: 'DESC' }
     });
@@ -124,8 +124,8 @@ export class ApadrinamientoService {
       apadrinamiento.animal = animal;
     }
 
-    if (dto.id_usuario) {
-      const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_usuario } });
+    if (dto.id_user) {
+      const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_user } });
       if (!usuario) throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
       apadrinamiento.usuario = usuario;
     }

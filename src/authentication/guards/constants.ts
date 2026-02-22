@@ -1,5 +1,3 @@
 export const jwtConstants = {
-  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
-  //secret: process.env.PWD
-
+  secret: process.env.JWT_SECRET || 'CHANGE_THIS_SECRET_IN_PRODUCTION_USE_ENV_VAR'
 };

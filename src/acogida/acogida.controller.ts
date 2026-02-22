@@ -14,7 +14,7 @@ import {
 import { AcogidaService } from './acogida.service';
 import { CreateAcogidaDto, UpdateAcogidaDto } from './acogida.dto';
 import { AuthGuard } from 'src/authentication/guards/guard';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RolUsuario } from 'src/user/user.entity';
 
 @ApiBearerAuth('access-token')
@@ -22,24 +22,6 @@ import { RolUsuario } from 'src/user/user.entity';
 @Controller('acogidas')
 export class AcogidaController {
   constructor(private readonly acogidaService: AcogidaService) {}
-
-  // Crear solicitud de acogida (cliente o trabajador)
-  @ApiOperation({ summary: 'Crear una solicitud de acogida' })
-  @UseGuards(AuthGuard)
-  @Post('post')
-  create(@Body() dto: CreateAcogidaDto, @Request() req) {
-    const user = req.user;
-
-    // Solo cliente o trabajador pueden crear solicitudes
-    if (user.rol !== RolUsuario.CLIENTE && user.rol !== RolUsuario.TRABAJADOR && user.rol !== RolUsuario.ADMIN) {
-      throw new HttpException('No tienes permisos para crear acogidas', HttpStatus.FORBIDDEN);
-    }
-
-    // El usuario solo puede crear acogidas para su protectora
-    dto.id_usuario = user.id_user;
-
-    return this.acogidaService.create(dto);
-  }
 
   // Obtener todas las acogidas (solo admin)
   @ApiOperation({ summary: 'Obtener todas las acogidas (solo admin)' })
@@ -53,7 +35,41 @@ export class AcogidaController {
     return this.acogidaService.findAll();
   }
 
-  // FALTA SEGURIDAD
+  // Obtener acogida por ID
+  @ApiOperation({ summary: 'Obtener una acogida por ID' })
+  @UseGuards(AuthGuard)
+  @Get('get-one/:id_acogida')
+  async findOne(@Param('id_acogida') id_acogida: number, @Request() req) {
+    const user = req.user;
+
+    const acogida = await this.acogidaService.findOne(id_acogida);
+
+    // Cliente solo sus propias acogidas
+    if (user.rol === RolUsuario.VETERINARIO) {
+        throw new HttpException('No tienes permisos para ver acogidas', HttpStatus.FORBIDDEN);
+    }
+
+    // Cliente solo sus propias acogidas
+    if (user.rol === RolUsuario.CLIENTE) {
+      if (acogida.usuario.id_user !== user.id_user) {
+        throw new HttpException('No tienes permisos para ver esta acogida', HttpStatus.FORBIDDEN);
+      }
+    }
+
+    // Trabajador solo acogidas de su protectora
+    if (user.rol === RolUsuario.TRABAJADOR) {
+      if (acogida.animal.protectora.id_protectora !== user.protectora.id_protectora) {
+        throw new HttpException(
+          'No puedes ver acogidas de otra protectora',
+          HttpStatus.FORBIDDEN
+        );
+      }
+    }
+
+    return acogida;
+  }
+
+
   // Obtener acogidas del usuario logeado
   @ApiOperation({ summary: 'Obtener mis solicitudes de acogida' })
   @UseGuards(AuthGuard)
@@ -67,35 +83,52 @@ export class AcogidaController {
   @ApiOperation({ summary: 'Obtener acogidas de un animal' })
   @UseGuards(AuthGuard)
   @Get('get-animal/:id_animal')
-  findByAnimal(@Param('id_animal') id_animal: number, @Request() req) {
-    const user = req.user;
+  async findByAnimal(@Param('id_animal') id_animal: number, @Request() req) {
+      const user = req.user;
 
-    if (user.rol !== RolUsuario.TRABAJADOR && user.rol !== RolUsuario.ADMIN) {
-      throw new HttpException('No tienes permisos para ver acogidas de animales', HttpStatus.FORBIDDEN);
-    }
+      // Solo trabajador o admin
+      if (user.rol !== RolUsuario.TRABAJADOR && user.rol !== RolUsuario.ADMIN) {
+          throw new HttpException('No tienes permisos para ver acogidas de animales', HttpStatus.FORBIDDEN);
+      }
 
-    return this.acogidaService.findByAnimal(id_animal);
-  }
+      // Cargar el animal para validar protectora
+      const animal = await this.acogidaService.getAcogida(id_animal);
 
-  // Obtener acogida por ID
-  @ApiOperation({ summary: 'Obtener una acogida por ID' })
-  @UseGuards(AuthGuard)
-  @Get('get-one/:id_acogida')
-  findOne(@Param('id_acogida') id_acogida: number, @Request() req) {
-    const user = req.user;
+      if (!animal) {
+          throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
+      }
 
-    // Cliente solo puede ver sus propias acogidas
-    if (user.rol === RolUsuario.CLIENTE) {
-      return this.acogidaService.findOne(id_acogida).then(acogida => {
-        if (acogida.usuario.id_user !== user.id_user) {
-          throw new HttpException('No tienes permisos para ver esta acogida', HttpStatus.FORBIDDEN);
+      // Si es trabajador validar protectora
+      if (user.rol === RolUsuario.TRABAJADOR) {
+        if (animal.protectora.id_protectora !== user.protectora.id_protectora) {
+          throw new HttpException(
+              'No puedes ver acogidas de animales de otra protectora',
+              HttpStatus.FORBIDDEN
+          );
         }
-        return acogida;
-      });
+      }
+
+      return this.acogidaService.findByAnimal(id_animal);
+  }
+
+  // Crear solicitud de acogida (cliente, trabajador o admin)
+  @ApiOperation({ summary: 'Crear una solicitud de acogida' })
+  @UseGuards(AuthGuard)
+  @Post('post')
+  create(@Body() dto: CreateAcogidaDto, @Request() req) {
+    const user = req.user;
+
+    // Solo cliente o trabajador pueden crear solicitudes
+    if (user.rol !== RolUsuario.CLIENTE && user.rol !== RolUsuario.TRABAJADOR && user.rol !== RolUsuario.ADMIN) {
+      throw new HttpException('No tienes permisos para crear acogidas', HttpStatus.FORBIDDEN);
     }
 
-    return this.acogidaService.findOne(id_acogida);
+    // El usuario solo puede crear acogidas para su protectora
+    dto.id_user = user.id_user;
+
+    return this.acogidaService.create(dto);
   }
+
 
   // Actualizar acogida (solo trabajador o admin)
   @ApiOperation({ summary: 'Actualizar una acogida (solo trabajador o admin)' })

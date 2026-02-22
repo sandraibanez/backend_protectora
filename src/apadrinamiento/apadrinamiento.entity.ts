@@ -21,6 +21,6 @@ export class Apadrinamiento {
   animal: Animal;
 
   @ManyToOne(() => User, user => user.apadrinamientos)
-  @JoinColumn({ name: 'id_usuario' })
+  @JoinColumn({ name: 'id_user' })
   usuario: User;
 }

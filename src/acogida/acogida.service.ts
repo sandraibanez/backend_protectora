@@ -19,6 +19,15 @@ export class AcogidaService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  // Busca un animal por su ID incluyendo su protectora,
+  async getAcogida(id_animal: number) {
+    return this.animalRepository.findOne({
+      where: { id_animal },
+      relations: ['protectora']
+    });
+  }
+
+
   // Crear solicitud de acogida
   async create(dto: CreateAcogidaDto): Promise<Acogida> {
     const animal = await this.animalRepository.findOne({ where: { id_animal: dto.id_animal } });
@@ -26,7 +35,7 @@ export class AcogidaService {
       throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_usuario } });
+    const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_user } });
     if (!usuario) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }
@@ -82,9 +91,9 @@ export class AcogidaService {
   }
 
   // Obtener todas las acogidas realizadas por un usuario
-  async findByUsuario(idUsuario: number): Promise<Acogida[]> {
+  async findByUsuario(id_user: number): Promise<Acogida[]> {
     const usuario = await this.userRepository.findOne({
-      where: { id_user: idUsuario },
+      where: { id_user: id_user },
     });
 
     if (!usuario) {
@@ -92,7 +101,7 @@ export class AcogidaService {
     }
 
     return this.acogidaRepository.find({
-      where: { usuario: { id_user: idUsuario } },
+      where: { usuario: { id_user: id_user } },
       relations: ['animal', 'usuario'],
       order: { fecha_solicitud: 'DESC' }
     });
@@ -123,8 +132,8 @@ export class AcogidaService {
       acogida.animal = animal;
     }
 
-    if (dto.id_usuario) {
-      const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_usuario } });
+    if (dto.id_user) {
+      const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_user } });
       if (!usuario) throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
       acogida.usuario = usuario;
     }

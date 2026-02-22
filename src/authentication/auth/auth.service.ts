@@ -34,6 +34,7 @@ export class AuthService { constructor( private jwtService: JwtService, @InjectR
       async getUserlogin(email: string): Promise<User> {
         const user = await this.userRepository.findOne({
           where: { email },
+          relations: ['protectora'],
         });
     
         if (!user) {

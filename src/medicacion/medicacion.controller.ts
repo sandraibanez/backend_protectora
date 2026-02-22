@@ -3,6 +3,7 @@ import { MedicacionService } from './medicacion.service';
 import { CreateMedicacionDto, UpdateMedicacionDto } from './medicacion.dto';
 import { AuthGuard } from 'src/authentication/guards/guard';
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
+import { RolUsuario } from 'src/user/user.entity';
 
 @ApiBearerAuth('access-token')
 @ApiTags('Medicaciones') 
@@ -11,54 +12,54 @@ export class MedicacionController {
 
   constructor(private readonly medicacionService: MedicacionService) {}
 
-  @ApiOperation({ summary: 'Obtener todas las medicaciones' })
+  @ApiOperation({ summary: 'Obtener todas las medicaciones (admin o veterinario)' })
   @UseGuards(AuthGuard)
   @Get("get")
   findAll(@Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN && user.rol !== RolUsuario.VETERINARIO) { 
       throw new HttpException('No tienes permisos para ver medicaciones', HttpStatus.FORBIDDEN); 
     }
     return this.medicacionService.findAll();
   }
 
-  @ApiOperation({ summary: 'Obtener una medicación por ID' })
+  @ApiOperation({ summary: 'Obtener una medicación por ID (admin o veterinario)' })
   @UseGuards(AuthGuard)
   @Get('get-:id')
   getMedicacion(@Param('id') id: string, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN && user.rol !== RolUsuario.VETERINARIO) { 
       throw new HttpException('No tienes permisos para ver medicaciones', HttpStatus.FORBIDDEN); 
     }
     const medicacionId = parseInt(id);
     if (isNaN(medicacionId)) {
-      throw new HttpException('Invalid medicacion ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('ID de medicación inválido', HttpStatus.BAD_REQUEST);
     }
     return this.medicacionService.getMedicacion(medicacionId);
   }
 
-  @ApiOperation({ summary: 'Crear una nueva medicación' })
+  @ApiOperation({ summary: 'Crear una nueva medicación (admin o veterinario)' })
   @UseGuards(AuthGuard)
   @Post("post")
   createMedicacion(@Body() createMedicacionDto: CreateMedicacionDto, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN && user.rol !== RolUsuario.VETERINARIO) { 
       throw new HttpException('No tienes permisos para crear medicaciones', HttpStatus.FORBIDDEN); 
     }
     return this.medicacionService.createMedicacion(createMedicacionDto);
   }
 
-  @ApiOperation({ summary: 'Actualizar una medicación existente' })
+  @ApiOperation({ summary: 'Actualizar una medicación existente (admin o veterinario)' })
   @UseGuards(AuthGuard)
   @Put(':id')
   updateMedicacion(@Param('id') id: string, @Body() updateMedicacionDto: UpdateMedicacionDto, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin' && userCurrent !== 'veterinario') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN && user.rol !== RolUsuario.VETERINARIO) { 
       throw new HttpException('No tienes permisos para actualizar medicaciones', HttpStatus.FORBIDDEN); 
     }
     const medicacionId = parseInt(id);
     if (isNaN(medicacionId)) {
-      throw new HttpException('Invalid medicacion ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('ID de medicación inválido', HttpStatus.BAD_REQUEST);
     }
     return this.medicacionService.updateMedicacion({
       ...updateMedicacionDto,
@@ -66,17 +67,17 @@ export class MedicacionController {
     });
   }
   
-  @ApiOperation({ summary: 'Eliminar una medicación' })
+  @ApiOperation({ summary: 'Eliminar una medicación (solo admin)' })
   @UseGuards(AuthGuard)
   @Delete(':id')
   deleteMedicacion(@Param('id') id: string, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN) { 
       throw new HttpException('No tienes permisos para eliminar medicaciones', HttpStatus.FORBIDDEN); 
     }
     const medicacionId = parseInt(id);
     if (isNaN(medicacionId)) {
-      throw new HttpException('Invalid medicacion ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('ID de medicación inválido', HttpStatus.BAD_REQUEST);
     }
     return this.medicacionService.deleteMedicacion(medicacionId);
   }

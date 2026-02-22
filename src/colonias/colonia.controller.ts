@@ -3,6 +3,7 @@ import { ColoniaService } from './colonia.service';
 import { CreateColoniaDto, UpdateColoniaDto } from './colonia.dto';
 import { AuthGuard } from 'src/authentication/guards/guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { RolUsuario } from 'src/user/user.entity';
 
 @ApiBearerAuth('access-token')
 @ApiTags('Colonias') 
@@ -21,16 +22,16 @@ export class ColoniaController {
   @UseGuards(AuthGuard)
   @Get('get/limitado/protectora/mias')
   findLimitedByProtectora(@Request() req) {
-    const idProtectora = req.user.protectora?.id_protectora;
+    const id_protectora = req.user.protectora?.id_protectora;
 
-    if (!idProtectora) {
+    if (!id_protectora) {
       throw new HttpException(
         'Este usuario no pertenece a ninguna protectora',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    return this.coloniaService.findLimitedByProtectora(idProtectora);
+    return this.coloniaService.findLimitedByProtectora(id_protectora);
   }
 
   @ApiOperation({ summary: 'Colonia con info limitada por protectora e ID' })
@@ -40,9 +41,9 @@ export class ColoniaController {
     @Param('idColonia') idColonia: number,
     @Request() req,
   ) {
-    const idProtectora = req.user.protectora?.id_protectora;
+    const id_protectora = req.user.protectora?.id_protectora;
 
-    if (!idProtectora) {
+    if (!id_protectora) {
       throw new HttpException(
         'Este usuario no pertenece a ninguna protectora',
         HttpStatus.BAD_REQUEST,
@@ -50,7 +51,7 @@ export class ColoniaController {
     }
 
     return this.coloniaService.findLimitedByProtectoraAndId(
-      idProtectora,
+      id_protectora,
       idColonia,
     );
   }
@@ -81,28 +82,28 @@ export class ColoniaController {
     };
   }
 
-  @ApiOperation({ summary: '' })
+  @ApiOperation({ summary: 'Crear una nueva colonia (solo admin)' })
   @UseGuards(AuthGuard)
   @Post("post")
   createColonia(@Body() createColoniaDto: CreateColoniaDto, @Request() req) {
-  let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN) { 
       throw new HttpException('No tienes permisos para crear colonias', HttpStatus.FORBIDDEN); 
     }
     return this.coloniaService.createColonia(createColoniaDto);
   }
 
-  @ApiOperation({ summary: '' })
+  @ApiOperation({ summary: 'Actualizar una colonia (solo admin)' })
   @UseGuards(AuthGuard)  
   @Put('put/:id')
   updateColonia(@Param('id') id: string, @Body() updateColoniaDto: UpdateColoniaDto, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN) { 
       throw new HttpException('No tienes permisos para actualizar colonias', HttpStatus.FORBIDDEN); 
     }
     const coloniaId = parseInt(id);
     if (isNaN(coloniaId)) {
-      throw new HttpException('Invalid colonia ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('ID de colonia inválido', HttpStatus.BAD_REQUEST);
     }
     return this.coloniaService.updateColonia(
       coloniaId, updateColoniaDto,
@@ -124,7 +125,7 @@ export class ColoniaController {
 
     // Validación de protectora
     if (
-      user.rol === 'trabajador' &&
+      user.rol === RolUsuario.TRABAJADOR &&
       user.protectora.id_protectora !== colonia.protectora.id_protectora
     ) {
       throw new HttpException(
@@ -135,18 +136,17 @@ export class ColoniaController {
     return this.coloniaService.asignarAnimal(idColonia, idAnimal);
   }
 
-  
-  @ApiOperation({ summary: '' })
+  @ApiOperation({ summary: 'Eliminar una colonia (solo admin)' })
   @UseGuards(AuthGuard)
   @Delete('delete/:id')
   deleteColonia(@Param('id') id: string, @Request() req) {
-    let userCurrent = req.user.rol;
-    if (userCurrent !== 'admin') { 
+    const user = req.user;
+    if (user.rol !== RolUsuario.ADMIN) { 
       throw new HttpException('No tienes permisos para eliminar colonias', HttpStatus.FORBIDDEN); 
     }
     const coloniaId = parseInt(id);
     if (isNaN(coloniaId)) {
-      throw new HttpException('Invalid colonia ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('ID de colonia inválido', HttpStatus.BAD_REQUEST);
     }
     return this.coloniaService.deleteColonia(coloniaId);
   }

@@ -25,19 +25,19 @@ export class ColoniaService {
         });
     }
 
-    async findLimitedByProtectora(idProtectora: number) {
+    async findLimitedByProtectora(id_protectora: number) {
         return this.coloniaRepository.find({
-            where: { protectora: { id_protectora: idProtectora } },
+            where: { protectora: { id_protectora: id_protectora } },
             select: ['id_colonia', 'localizacion', 'foto', 'conteo_gatos'],
             relations: ['protectora'],
         });
     }
 
-    async findLimitedByProtectoraAndId(idProtectora: number, idColonia: number) {
+    async findLimitedByProtectoraAndId(id_protectora: number, idColonia: number) {
         return this.coloniaRepository.findOne({
             where: {
             id_colonia: idColonia,
-            protectora: { id_protectora: idProtectora },
+            protectora: { id_protectora: id_protectora },
             },
             select: ['id_colonia', 'localizacion', 'foto', 'conteo_gatos'],
             relations: ['protectora'],

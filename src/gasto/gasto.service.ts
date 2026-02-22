@@ -19,6 +19,19 @@ export class GastoService {
     return this.gastoRepository.find({ relations: ['protectora'] });
   }
 
+  async findByProtectora(id_protectora: number): Promise<Gasto[]> {
+    const protectora = await this.protectoraRepository.findOneBy({ id_protectora });
+    if (!protectora) {
+      throw new HttpException('Protectora no encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    return this.gastoRepository.find({
+      where: { protectora: { id_protectora } },
+      relations: ['protectora'],
+      order: { fecha: 'DESC' }
+    });
+  }
+
   async getGasto(id_gasto: number): Promise<Gasto> {
     const gasto = await this.gastoRepository.findOne({
       where: { id_gasto },

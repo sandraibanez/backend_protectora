@@ -19,6 +19,19 @@ export class IngresoService {
     return this.ingresoRepository.find({ relations: ['protectora'] });
   }
 
+  async findByProtectora(id_protectora: number): Promise<Ingreso[]> {
+    const protectora = await this.protectoraRepository.findOneBy({ id_protectora });
+    if (!protectora) {
+      throw new HttpException('Protectora no encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    return this.ingresoRepository.find({
+      where: { protectora: { id_protectora } },
+      relations: ['protectora'],
+      order: { fecha: 'DESC' }
+    });
+  }
+
   async getIngreso(id_ingreso: number): Promise<Ingreso> {
     const ingreso = await this.ingresoRepository.findOne({
       where: { id_ingreso },
