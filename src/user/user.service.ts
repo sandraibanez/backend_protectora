@@ -5,6 +5,7 @@ import { RolUsuario, User } from './user.entity';
 import { AdminUpdateUserDto, CreateUserDto, UpdateUserDto } from './user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { AppConfig } from 'src/config/app.config';
 
 @Injectable()
 export class UserService {
@@ -13,6 +14,7 @@ export class UserService {
     private jwtService: JwtService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private appConfig: AppConfig,
   ) { }
 
   // Obtener todos los usuarios
@@ -63,11 +65,14 @@ export class UserService {
   // Crear un nuevo usuario
   async createUser(createUserDto: CreateUserDto): Promise<User> {
 
+    // Asignar automáticamente la protectora de la app si no se especifica
+    const protectoraId = createUserDto.protectora || this.appConfig.protectoraId;
+
     // Verificar si el email ya está registrado en ESTA protectora
     const existeUser = await this.userRepository.findOne({
       where: {
         email: createUserDto.email,
-        protectora: { id_protectora: createUserDto.protectora }
+        protectora: { id_protectora: protectoraId }
       },
       relations: ['protectora']
     });
@@ -84,7 +89,7 @@ export class UserService {
     const newUser = this.userRepository.create(resto);
 
     // Asignar la protectora como relación ManyToOne
-    newUser.protectora = { id_protectora: protectora } as any;
+    newUser.protectora = { id_protectora: protectoraId } as any;
 
     // Hashear la contraseña
     const saltOrRounds = 10;

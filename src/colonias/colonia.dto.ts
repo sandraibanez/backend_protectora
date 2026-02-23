@@ -1,14 +1,25 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsDateString, IsOptional, IsInt } from 'class-validator';
+import { IsString, IsDateString, IsOptional, IsInt, IsNumber } from 'class-validator';
 
 export class CreateColoniaDto {
   @ApiProperty({ example: 'Calle 789', description: 'Ubicación de la colonia de gatos' })
   @IsString()
   localizacion: string;
 
-  @ApiProperty({ example: 1, description: 'Número de gatos en la colonia' })
+  @ApiPropertyOptional({ example: 15, description: 'Número de gatos en la colonia' })
+  @IsOptional()
   @IsInt()
-  conteo_gatos: number;
+  conteo_gatos?: number;
+
+  @ApiPropertyOptional({ example: 40.416775, description: 'Latitud GPS de la colonia' })
+  @IsOptional()
+  @IsNumber()
+  latitud?: number;
+
+  @ApiPropertyOptional({ example: -3.703790, description: 'Longitud GPS de la colonia' })
+  @IsOptional()
+  @IsNumber()
+  longitud?: number;
 
   @ApiProperty({ example: 'gato.png', description: 'Foto representativa de la colonia', required: false })
   @IsOptional()
@@ -32,10 +43,20 @@ export class UpdateColoniaDto {
   @IsString()
   localizacion?: string;
 
-  @ApiPropertyOptional({ example: 1, description: 'Número de gatos en la colonia', required: false })
+  @ApiPropertyOptional({ example: 15, description: 'Número de gatos en la colonia' })
   @IsOptional()
   @IsInt()
   conteo_gatos?: number;
+
+  @ApiPropertyOptional({ example: 40.416775, description: 'Latitud GPS de la colonia' })
+  @IsOptional()
+  @IsNumber()
+  latitud?: number;
+
+  @ApiPropertyOptional({ example: -3.703790, description: 'Longitud GPS de la colonia' })
+  @IsOptional()
+  @IsNumber()
+  longitud?: number;
 
   @ApiPropertyOptional({ example: 'gato.png', description: 'Foto representativa de la colonia', required: false })
   @IsOptional()

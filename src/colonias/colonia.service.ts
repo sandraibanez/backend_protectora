@@ -6,6 +6,12 @@ import { CreateColoniaDto, UpdateColoniaDto } from './colonia.dto';
 import { Protectora } from 'src/protectora/protectora.entity';
 import { Animal } from 'src/animal/animal.entity';
 
+// Interfaz para respuesta con conteos calculados
+export interface ColoniaConConteos extends Colonia {
+    conteo_gatos: number;
+    conteo_castrados: number;
+}
+
 @Injectable()
 export class ColoniaService {
     constructor(
@@ -19,33 +25,63 @@ export class ColoniaService {
         private readonly animalRepository: Repository<Animal>,
     ) {}
 
-    findAll(): Promise<Colonia[]> {
-        return this.coloniaRepository.find({
+    // Método auxiliar para calcular conteos de una colonia
+    private async calcularConteos(colonia: Colonia): Promise<ColoniaConConteos> {
+        const totalAnimales = await this.animalRepository.count({
+            where: { colonia: { id_colonia: colonia.id_colonia } },
+        });
+
+        const totalCastrados = await this.animalRepository.count({
+            where: { 
+                colonia: { id_colonia: colonia.id_colonia },
+                esterilizado: true,
+            },
+        });
+
+        return {
+            ...colonia,
+            conteo_gatos: totalAnimales,
+            conteo_castrados: totalCastrados,
+        };
+    }
+
+    async findAll(): Promise<ColoniaConConteos[]> {
+        const colonias = await this.coloniaRepository.find({
             relations: ['protectora'], 
         });
+
+        // Calcular conteos para cada colonia
+        return Promise.all(colonias.map(colonia => this.calcularConteos(colonia)));
     }
 
-    async findLimitedByProtectora(id_protectora: number) {
-        return this.coloniaRepository.find({
+    async findLimitedByProtectora(id_protectora: number): Promise<ColoniaConConteos[]> {
+        const colonias = await this.coloniaRepository.find({
             where: { protectora: { id_protectora: id_protectora } },
-            select: ['id_colonia', 'localizacion', 'foto', 'conteo_gatos'],
             relations: ['protectora'],
         });
+
+        // Calcular conteos para cada colonia
+        return Promise.all(colonias.map(colonia => this.calcularConteos(colonia)));
     }
 
-    async findLimitedByProtectoraAndId(id_protectora: number, idColonia: number) {
-        return this.coloniaRepository.findOne({
+    async findLimitedByProtectoraAndId(id_protectora: number, idColonia: number): Promise<ColoniaConConteos> {
+        const colonia = await this.coloniaRepository.findOne({
             where: {
-            id_colonia: idColonia,
-            protectora: { id_protectora: id_protectora },
+                id_colonia: idColonia,
+                protectora: { id_protectora: id_protectora },
             },
-            select: ['id_colonia', 'localizacion', 'foto', 'conteo_gatos'],
             relations: ['protectora'],
         });
+
+        if (!colonia) {
+            throw new HttpException('Colonia no encontrada', HttpStatus.NOT_FOUND);
+        }
+
+        return this.calcularConteos(colonia);
     }
 
 
-    async getColonia(id_colonia: number): Promise<Colonia> {
+    async getColonia(id_colonia: number): Promise<ColoniaConConteos> {
         const colonia = await this.coloniaRepository.findOne({
             where: { id_colonia },
             relations: ['protectora'], 
@@ -54,7 +90,8 @@ export class ColoniaService {
         if (!colonia) {
             throw new HttpException('Colonia no encontrada', HttpStatus.NOT_FOUND);
         }
-        return colonia;
+
+        return this.calcularConteos(colonia);
     }
 
     async createColonia(createColoniaDto: CreateColoniaDto): Promise<Colonia> {
@@ -96,7 +133,9 @@ export class ColoniaService {
             localizacion: updateColoniaDto.localizacion,
             conteo_gatos: updateColoniaDto.conteo_gatos,
             foto: updateColoniaDto.foto,
-            horario_alimento: updateColoniaDto.horario_alimento
+            horario_alimento: updateColoniaDto.horario_alimento,
+            latitud: updateColoniaDto.latitud,
+            longitud: updateColoniaDto.longitud
         };
         
         this.coloniaRepository.merge(colonia, camposSimples);

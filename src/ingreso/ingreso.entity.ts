@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Protectora } from '../protectora/protectora.entity';
+import { User } from '../user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('ingresos')
@@ -19,6 +20,11 @@ export class Ingreso {
   @ApiProperty({ example: 500, description: 'Cantidad económica del ingreso en euros' })
   @Column()
   cantidad: number;
+
+  @ApiProperty({ type: () => User, description: 'Usuario que realizó la donación (opcional)' })
+  @ManyToOne(() => User, { nullable: true, eager: true })
+  @JoinColumn({ name: 'id_user' })
+  usuario?: User;
 
   @ApiProperty({ type: () => Protectora, description: 'Protectora asociada a este ingreso' })
   @ManyToOne(() => Protectora, (protectora) => protectora.id_protectora, { eager: true })

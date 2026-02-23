@@ -6,6 +6,7 @@ import { CreateApadrinamientoDto, UpdateApadrinamientoDto } from './apadrinamien
 
 import { Animal } from 'src/animal/animal.entity';
 import { User } from 'src/user/user.entity';
+import { AppConfig } from 'src/config/app.config';
 
 @Injectable()
 export class ApadrinamientoService {
@@ -18,18 +19,51 @@ export class ApadrinamientoService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private readonly appConfig: AppConfig,
   ) {}
 
+  // Busca un animal por su ID incluyendo su protectora
+  async getAnimal(id_animal: number) {
+    return this.animalRepository.findOne({
+      where: { id_animal },
+      relations: ['protectora']
+    });
+  }
+
   // Crear apadrinamiento
-  async create(dto: CreateApadrinamientoDto): Promise<Apadrinamiento> {
-    const animal = await this.animalRepository.findOne({ where: { id_animal: dto.id_animal } });
+  async create(dto: CreateApadrinamientoDto, userProtectoraId: number): Promise<Apadrinamiento> {
+    const animal = await this.animalRepository.findOne({ 
+      where: { id_animal: dto.id_animal },
+      relations: ['protectora']
+    });
+    
     if (!animal) {
       throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_user } });
+    // Validar que el animal pertenece a la protectora de la app
+    if (animal.protectora.id_protectora !== this.appConfig.protectoraId) {
+      throw new HttpException(
+        'No puedes apadrinar animales de otra protectora',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const usuario = await this.userRepository.findOne({ 
+      where: { id_user: dto.id_user },
+      relations: ['protectora']
+    });
     if (!usuario) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // Validar que el usuario pertenece a la misma protectora
+    if (!this.appConfig.belongsToAppProtectora(usuario.protectora?.id_protectora)) {
+      throw new HttpException(
+        'No puedes crear apadrinamientos en esta protectora',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     // Un usuario no puede apadrinar dos veces el mismo animal

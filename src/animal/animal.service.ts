@@ -4,6 +4,7 @@ import { In, Repository } from 'typeorm';
 import { Animal } from './animal.entity';
 import { CreateAnimalDto, UpdateAnimalDto } from './animal.dto';
 import { Protectora } from 'src/protectora/protectora.entity';
+import { AppConfig } from 'src/config/app.config';
 
 @Injectable()
 export class AnimalService {
@@ -13,6 +14,8 @@ export class AnimalService {
 
         @InjectRepository(Protectora)
         private readonly protectoraRepository: Repository<Protectora>,
+
+        private readonly appConfig: AppConfig,
     ) {}
 
     // Obtener todos los animales
@@ -51,14 +54,15 @@ export class AnimalService {
         });
     }
 
-    async createAnimal(id_protectora: number, createAnimalDto: CreateAnimalDto): Promise<Animal> {
+    async createAnimal(createAnimalDto: CreateAnimalDto, userProtectoraId: number): Promise<Animal> {
+        // Usar protectora del DTO (si es admin) o la protectora del usuario/app
+        const protectoraId = createAnimalDto.protectora || userProtectoraId;
 
         // Validar protectora
-        const protectora = await this.protectoraRepository.findOneBy({ id_protectora: createAnimalDto.protectora });
+        const protectora = await this.protectoraRepository.findOneBy({ id_protectora: protectoraId });
         if (!protectora) {
             throw new HttpException('Protectora no encontrada', HttpStatus.BAD_REQUEST);
         }
-
 
         // Crear el animal pasando objetos
         const animal = this.animalRepository.create({

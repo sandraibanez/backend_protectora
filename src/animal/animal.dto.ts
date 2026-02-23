@@ -45,10 +45,11 @@ export class CreateAnimalDto {
   @IsBoolean()
   adoptable: boolean;
 
-  @ApiProperty({ example: 1, description: 'ID de la protectora a la que pertenece el animal' })
+  @ApiPropertyOptional({ example: 1, description: 'ID de la protectora (opcional, se usa la del .env si no se especifica)' })
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
-  protectora: number;
+  protectora?: number;
 
 }
 

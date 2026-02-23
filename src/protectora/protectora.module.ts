@@ -6,9 +6,9 @@ import { ProtectoraController } from './protectora.controller';
 import { Animal } from 'src/animal/animal.entity';
 import { Colonia } from 'src/colonias/colonia.entity';
 import { DonacionesViveres } from 'src/donaciones_viveres/donaciones_viveres.entity';
-import { Gasto } from 'src/gasto/gasto.entity';
 import { Ingreso } from 'src/ingreso/ingreso.entity';
-import { Veterinario } from 'src/veterinario/veterinario.entity';
+import { AppConfig } from 'src/config/app.config';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -16,13 +16,11 @@ import { Veterinario } from 'src/veterinario/veterinario.entity';
       Animal,
       Colonia,
       DonacionesViveres,
-      Gasto,
       Ingreso,
-      Veterinario,
     ]),
   ],
   controllers: [ProtectoraController],
-  providers: [ProtectoraService],
+  providers: [ProtectoraService, AppConfig],
   exports:[TypeOrmModule]
 })
 export class ProtectoraModule { }

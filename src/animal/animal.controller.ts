@@ -59,53 +59,68 @@ export class AnimalController {
     return animal;
   }
 
-  @ApiOperation({ summary: 'Obtener todos los animales de una protectora' })
+  @ApiOperation({ summary: 'Obtener todos los animales de mi protectora' })
+  @UseGuards(AuthGuard)
+  @Get('mi-protectora')
+  findMyProtectora(@Request() req) {
+    const user = req.user;
+
+    // Todos los usuarios (excepto admin) ven animales de su protectora
+    // Admin necesita especificar protectora explícitamente
+    if (user.rol === RolUsuario.ADMIN) {
+      throw new HttpException(
+        'Admin debe usar GET /animales/protectora/:idProtectora',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const protectora = user.protectora?.id_protectora;
+    if (!protectora) {
+      throw new HttpException('Usuario sin protectora asignada', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.animalService.findByProtectora(protectora);
+  }
+
+  @ApiOperation({ summary: 'Obtener animales de una protectora específica (solo admin)' })
   @UseGuards(AuthGuard)
   @Get('protectora/:idProtectora')
   findByProtectora(@Param('idProtectora') idProtectora: string, @Request() req) {
     const user = req.user;
 
-    // ADMIN puede ver cualquier protectora
-    if (user.rol === RolUsuario.ADMIN) {
-      const protectora = parseInt(idProtectora);
-      if (isNaN(protectora)) {
-        throw new HttpException('ID de protectora inválido', HttpStatus.BAD_REQUEST);
-      }
-      return this.animalService.findByProtectora(protectora);
+    // Solo ADMIN puede especificar protectora
+    if (user.rol !== RolUsuario.ADMIN) {
+      throw new HttpException(
+        'No tienes permisos. Usa GET /animales/mi-protectora',
+        HttpStatus.FORBIDDEN
+      );
     }
 
-    // CLIENTE, TRABAJADOR, VETERINARIO solo su protectora
-    const protectora = user.protectora.id_protectora;
-
+    const protectora = parseInt(idProtectora);
+    if (isNaN(protectora)) {
+      throw new HttpException('ID de protectora inválido', HttpStatus.BAD_REQUEST);
+    }
+    
     return this.animalService.findByProtectora(protectora);
   }
 
 
 
-  // Que se le asigna directamente a la protectora
   @ApiOperation({ summary: 'Crear un nuevo animal (solo admin y trabajador)' }) 
   @UseGuards(AuthGuard)
-  @Post("post/:id_protectora")
-  createAnimal(@Param('id_protectora') id_protectora: string, @Body() createAnimalDto: CreateAnimalDto, @Request() req) { 
-    let userCurrent = req.user;
-    if (userCurrent.rol !== RolUsuario.ADMIN && userCurrent.rol !==  RolUsuario.TRABAJADOR) { 
+  @Post("post")
+  createAnimal(@Body() createAnimalDto: CreateAnimalDto, @Request() req) { 
+    const user = req.user;
+    
+    if (user.rol !== RolUsuario.ADMIN && user.rol !== RolUsuario.TRABAJADOR) { 
       throw new HttpException('No tienes permisos para crear animales', HttpStatus.FORBIDDEN); 
     } 
 
-    // Si es protectora el ID debe venir del token
-    if (userCurrent.rol ===  RolUsuario.TRABAJADOR) {
-      const protectora = userCurrent.protectora.id_protectora;
-      return this.animalService.createAnimal(protectora, createAnimalDto);
-    }
-
-    // Si es admin puede usar el parámetro
-    if (userCurrent.rol === RolUsuario.ADMIN) {
-      const protectora = parseInt(id_protectora);
-      if (isNaN(protectora)) {
-        throw new HttpException('Invalid protectora ID', HttpStatus.BAD_REQUEST);
-      }
-      return this.animalService.createAnimal(protectora, createAnimalDto);
-    }
+    // Trabajador: usa su protectora automáticamente
+    // Admin: puede especificar protectora en el DTO o usa la de la app
+    const userProtectoraId = user.protectora?.id_protectora;
+    
+    return this.animalService.createAnimal(createAnimalDto, userProtectoraId);
   }
 
   @ApiOperation({ summary: 'Actualizar un animal por ID (admin y protectora dueña)' }) 

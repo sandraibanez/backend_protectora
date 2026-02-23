@@ -1,12 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
-import { Animal } from 'src/animal/animal.entity';
-import { Veterinario } from 'src/veterinario/veterinario.entity';
-import { Colonia } from 'src/colonias/colonia.entity';
-import { DonacionesViveres } from 'src/donaciones_viveres/donaciones_viveres.entity';
-import { Gasto } from 'src/gasto/gasto.entity';
-import { Ingreso } from 'src/ingreso/ingreso.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/user/user.entity';
+import { Noticia } from 'src/noticia/noticia.entity';
 
 @Entity('protectoras') 
 export class Protectora {
@@ -27,13 +22,17 @@ export class Protectora {
   telefono: number;
 
   @ApiProperty({ 
-    type: () => [Veterinario], 
-    description: 'Veterinarios asociados a la protectora' 
+    type: () => [User], 
+    description: 'Trabajadores y veterinarios asociados a la protectora' 
   })
-  @ManyToMany(() => Veterinario, (veterinario) => veterinario.protectoras)
-  veterinarios: Veterinario[];
-
   @OneToMany(() => User, user => user.protectora)
   trabajadores: User[];
+
+  @ApiProperty({ 
+    type: () => [Noticia], 
+    description: 'Noticias de la protectora' 
+  })
+  @OneToMany(() => Noticia, noticia => noticia.protectora)
+  noticias: Noticia[];
 
 }

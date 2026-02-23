@@ -123,10 +123,10 @@ export class AcogidaController {
       throw new HttpException('No tienes permisos para crear acogidas', HttpStatus.FORBIDDEN);
     }
 
-    // El usuario solo puede crear acogidas para su protectora
+    // El usuario solo puede crear acogidas para sí mismo (se sobrescribe)
     dto.id_user = user.id_user;
 
-    return this.acogidaService.create(dto);
+    return this.acogidaService.create(dto, user.protectora?.id_protectora);
   }
 
 

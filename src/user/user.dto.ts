@@ -34,10 +34,11 @@ export class CreateUserDto {
   @IsEnum(RolUsuario)
   rol: RolUsuario;
 
-  @ApiProperty({ example: 3, description: 'ID de la protectora a la que pertenece el usuario' })
+  @ApiPropertyOptional({ example: 1, description: 'ID de la protectora (se asigna automáticamente si no se especifica)' })
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
-  protectora: number;
+  protectora?: number;
 
   
 

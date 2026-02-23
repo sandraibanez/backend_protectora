@@ -5,10 +5,16 @@ import { AnimalEntidadController } from './animal_entidad.controller';
 import { AnimalEntidadService } from './animal_entidad.service';
 import { Animal } from 'src/animal/animal.entity';
 import { Entidad } from 'src/entidad/entidad.entity';
+import { AppConfig } from 'src/config/app.config';
+import { AnimalModule } from 'src/animal/animal.module';
+
 @Module({
-    imports: [TypeOrmModule.forFeature([Animal_Entidad, Animal, Entidad])],
+    imports: [
+        TypeOrmModule.forFeature([Animal_Entidad, Animal, Entidad]),
+        AnimalModule
+    ],
     controllers: [AnimalEntidadController],
-    providers: [AnimalEntidadService],
+    providers: [AnimalEntidadService, AppConfig],
     exports: [TypeOrmModule]
 })
 export class AnimalEntidadModule { }

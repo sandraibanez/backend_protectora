@@ -4,10 +4,12 @@ import { DonacionesViveres } from './donaciones_viveres.entity';
 import { DonacionesViveresController } from './donaciones_viveres.controller';
 import { DonacionesViveresService } from './donaciones_viveres.service';
 import { Protectora } from 'src/protectora/protectora.entity';
+import { AppConfig } from 'src/config/app.config';
+
 @Module({
   imports: [TypeOrmModule.forFeature([DonacionesViveres, Protectora])],
   controllers: [DonacionesViveresController],
-  providers: [DonacionesViveresService],
+  providers: [DonacionesViveresService, AppConfig],
   exports: [TypeOrmModule]
 })
 export class DonacionesViveresModule { }

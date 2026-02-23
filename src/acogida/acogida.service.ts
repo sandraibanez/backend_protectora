@@ -5,6 +5,7 @@ import { Acogida, EstadoAcogida } from './acogida.entity';
 import { CreateAcogidaDto, UpdateAcogidaDto } from './acogida.dto';
 import { Animal } from 'src/animal/animal.entity';
 import { User } from 'src/user/user.entity';
+import { AppConfig } from 'src/config/app.config';
 
 @Injectable()
 export class AcogidaService {
@@ -17,6 +18,8 @@ export class AcogidaService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private readonly appConfig: AppConfig,
   ) {}
 
   // Busca un animal por su ID incluyendo su protectora,
@@ -29,15 +32,38 @@ export class AcogidaService {
 
 
   // Crear solicitud de acogida
-  async create(dto: CreateAcogidaDto): Promise<Acogida> {
-    const animal = await this.animalRepository.findOne({ where: { id_animal: dto.id_animal } });
+  async create(dto: CreateAcogidaDto, userProtectoraId: number): Promise<Acogida> {
+    const animal = await this.animalRepository.findOne({ 
+      where: { id_animal: dto.id_animal },
+      relations: ['protectora']
+    });
+    
     if (!animal) {
       throw new HttpException('Animal no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    const usuario = await this.userRepository.findOne({ where: { id_user: dto.id_user } });
+    // Validar que el animal pertenece a la protectora de la app
+    if (animal.protectora.id_protectora !== this.appConfig.protectoraId) {
+      throw new HttpException(
+        'No puedes solicitar acogida de animales de otra protectora',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const usuario = await this.userRepository.findOne({ 
+      where: { id_user: dto.id_user },
+      relations: ['protectora']
+    });
     if (!usuario) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // Validar que el usuario pertenece a la misma protectora
+    if (!this.appConfig.belongsToAppProtectora(usuario.protectora?.id_protectora)) {
+      throw new HttpException(
+        'No puedes crear acogidas en esta protectora',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     // Un animal no puede tener dos acogidas activas

@@ -1,10 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, Index } from 'typeorm';
-import { RelacionPersonaAnimal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Protectora } from 'src/protectora/protectora.entity';
 import { Acogida } from 'src/acogida/acogida.entity';
 import { Apadrinamiento } from 'src/apadrinamiento/apadrinamiento.entity';
-import { AnimalVeterinario } from 'src/animal_veterinario/animal_veterinario.entity';
+import { Adopcion } from 'src/adopcion/adopcion.entity';
+import { Noticia } from 'src/noticia/noticia.entity';
+import { HistorialMedico } from 'src/historial_medico/historial_medico.entity';
 
 export enum RolUsuario {
   ADMIN = 'admin',
@@ -59,15 +60,20 @@ export class User {
   @JoinColumn({ name: 'id_protectora' })
   protectora: Protectora;
 
-  @OneToMany(() => AnimalVeterinario, av => av.veterinario)
-  animalVeterinarios: AnimalVeterinario[];
-
+  @OneToMany(() => HistorialMedico, historial => historial.veterinario)
+  historialesMedicos: HistorialMedico[];
 
   @OneToMany(() => Acogida, acogida => acogida.usuario)
   acogidas: Acogida[];
 
   @OneToMany(() => Apadrinamiento, apadrinamiento => apadrinamiento.usuario)
   apadrinamientos: Apadrinamiento[];
+
+  @OneToMany(() => Adopcion, adopcion => adopcion.adoptante)
+  adopciones: Adopcion[];
+
+  @OneToMany(() => Noticia, noticia => noticia.autor)
+  noticias: Noticia[];
 
 
 }

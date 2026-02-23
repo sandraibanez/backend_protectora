@@ -15,13 +15,6 @@ export class CreateProtectoraDto {
   @Type(() => Number)
   @IsInt()
   telefono: number;
-
-  @ApiProperty({ example: [1, 2], description: 'IDs de veterinarios asociados'})
-  @IsOptional()
-  @IsArray()
-  @Type(() => Number)
-  @IsInt({ each: true })
-  veterinarios?: number[];
 }
 
 export class UpdateProtectoraDto {
@@ -66,11 +59,4 @@ export class UpdateProtectoraDto {
   @Type(() => Number)
   @IsInt({ each: true })
   ingresos?: number[];
-
-  @ApiPropertyOptional({ example: [1, 2], description: 'IDs de veterinarios asociados' })
-  @IsOptional()
-  @IsArray()
-  @Type(() => Number)
-  @IsInt({ each: true })
-  veterinarios?: number[];
 }

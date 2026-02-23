@@ -13,9 +13,13 @@ export class Colonia {
     @Column()
     localizacion: string;
 
-    @ApiProperty({ example: 12, description: 'Cantidad de gatos de una colonia en concreto' })
-    @Column()
-    conteo_gatos: number;
+    @ApiProperty({ example: 40.416775, description: 'Latitud GPS de la colonia', required: false })
+    @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
+    latitud?: number;
+
+    @ApiProperty({ example: -3.703790, description: 'Longitud GPS de la colonia', required: false })
+    @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
+    longitud?: number;
 
     @ApiProperty({ example: '2025-05-16', description: 'Fecha que se ha llevado comida a la colonia' })
     @Column({ type: 'date' })

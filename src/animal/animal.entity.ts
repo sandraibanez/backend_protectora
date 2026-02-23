@@ -1,13 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne ,ManyToOne } from 'typeorm';
-import { Medicacion } from 'src/medicacion/medicacion.entity';
-import { RelacionPersonaAnimal } from 'src/relacion_persona_animal/relacion_persona_animal.entity';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
 import { Animal_Entidad } from 'src/animal_entidad/animal_entidad.entity';
-import { AnimalVeterinario } from 'src/animal_veterinario/animal_veterinario.entity';
 import { Protectora } from 'src/protectora/protectora.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Acogida } from 'src/acogida/acogida.entity';
 import { Apadrinamiento } from 'src/apadrinamiento/apadrinamiento.entity';
 import { Colonia } from 'src/colonias/colonia.entity';
+import { HistorialMedico } from 'src/historial_medico/historial_medico.entity';
 
 @Entity('animales') 
 export class Animal {
@@ -59,9 +57,9 @@ export class Animal {
   @ManyToOne(() => Protectora, protectora => protectora.id_protectora)
   protectora: Protectora;
 
-  @ApiProperty({ type: () => AnimalVeterinario, description: 'Relación animal-veterinario (consulta)' })
-  @OneToMany(() => AnimalVeterinario, animalVeterinario => animalVeterinario.animal)
-  animalVeterinarios: AnimalVeterinario[];
+  @ApiProperty({ type: () => HistorialMedico, description: 'Historial médico completo del animal' })
+  @OneToMany(() => HistorialMedico, historial => historial.animal)
+  historialMedico: HistorialMedico[];
 
   @OneToMany(() => Acogida, acogida => acogida.animal)
   acogidas: Acogida[];
