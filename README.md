@@ -23,17 +23,64 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Backend para sistema de gestión de protectoras de animales. Desarrollado con [NestJS](https://github.com/nestjs/nest) y TypeORM.
 
-## Project setup
+## Requisitos
 
-```bash
-$ npm install
+- Docker y Docker Compose
+- Node.js (opcional, para desarrollo local)
+
+## Configuración inicial
+
+1. **Configurar variables de entorno**
+
+Asegúrate de que el archivo `.env` existe en la raíz del proyecto:
+
+```env
+MYSQL_DATABASE=backend
+MYSQL_USER=root
+MYSQL_PASSWORD=1234
+MYSQL_ROOT_PASSWORD=1234
+WEB_SERVER_PORT=3000
+DB_PORT=3306
+PROTECTORA_ID=1
 ```
 
-## Compile and run the project
+2. **Iniciar servicios con Docker**
 
 ```bash
+# Construir e iniciar contenedores
+$ docker-compose up --build
+
+# O en modo detached
+$ docker-compose up -d
+```
+
+3. **Ejecutar seeds (datos iniciales)**
+
+Una vez que los contenedores estén corriendo, ejecuta:
+
+```bash
+$ npm run seed
+```
+
+Esto creará:
+- Protectora inicial (id=1)
+- Usuario administrador:
+  - Email: `admin@protectora.com`
+  - Contraseña: `admin123`
+
+## API Documentation
+
+Una vez iniciado el servidor, accede a la documentación Swagger en:
+- http://localhost:3000/api
+
+## Desarrollo local (sin Docker)
+
+```bash
+# Instalar dependencias
+$ npm install
+
 # development
 $ npm run start
 
